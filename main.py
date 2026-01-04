@@ -117,148 +117,7 @@ class NanjingSubwayVisualizer:
                 plt.rcParams['axes.unicode_minus'] = False
         except:
             pass
-    
-    def plot_latest_line_proportion_improved(self):
-        """改进的饼图：解决标签重叠问题，修复实际客流量计算"""
-        try:
-            proportions = self.data_collector.get_latest_line_proportions()
-            latest_date = self.data_collector.get_latest_date()
-            
-            # 获取总客流量
-            latest_data = self.data_collector.get_latest_data()
-            total_passenger = latest_data['passenger_data'].get('总客流量', 0)
-            
-            if not proportions:
-                logger.warning("没有找到最新数据")
-                return None
-            
-            # 按占比从大到小排序
-            sorted_items = sorted(proportions.items(), key=lambda x: x[1], reverse=True)
-            
-            # 方案1：过滤掉占比太小的线路（< 2%），归为"其他"
-            main_lines = []
-            main_values = []
-            other_value = 0
-            other_lines = []
-            
-            for line_name, value in sorted_items:
-                if value >= 2:  # 只显示占比大于等于2%的线路
-                    main_lines.append(line_name)
-                    main_values.append(value)
-                else:
-                    other_value += value
-                    other_lines.append(line_name)
-            
-            # 如果有"其他"类别，添加到数据中
-            if other_value > 0:
-                main_lines.append(f"其他({len(other_lines)}条)")
-                main_values.append(other_value)
-            
-            # 获取对应颜色
-            colors = [self.line_colors.get(line, '#CCCCCC') for line in main_lines]
-            if other_value > 0:
-                colors[-1] = '#E0E0E0'  # 其他类别用灰色
-            
-            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
-            
-            # 1. 改进的饼图 - 使用外部标签和引导线
-            # 定义自定义的autopct函数，正确计算实际客流量
-            def autopct_func(pct):
-                actual = total_passenger * pct / 100
-                return f'{pct:.1f}%\n({actual:.1f}万)'
-            
-            wedges, texts, autotexts = ax1.pie(
-                main_values, 
-                labels=main_lines, 
-                autopct=autopct_func,
-                colors=colors,
-                startangle=90,
-                pctdistance=0.85,
-                labeldistance=1.1,
-                wedgeprops=dict(width=0.3, edgecolor='white'),  # 环形图
-                textprops={'fontsize': 9, 'fontweight': 'bold'}
-            )
-            
-            # 调整标签位置，避免重叠
-            for i, (text, autotext) in enumerate(zip(texts, autotexts)):
-                if main_values[i] < 5:  # 小占比标签特殊处理
-                    # 将小占比标签移到外部
-                    text.set_position((text.get_position()[0]*1.3, text.get_position()[1]*1.3))
-                    if main_values[i] >= 2:  # 只显示大于等于2%的百分比
-                        autotext.set_position((autotext.get_position()[0]*1.15, autotext.get_position()[1]*1.15))
-            
-            # 设置饼图标题
-            ax1.set_title(f'{latest_date} 南京地铁各线路客流占比\n总客流量: {total_passenger:.1f}万', 
-                         fontsize=14, fontweight='bold')
-            ax1.axis('equal')
-            
-            # 2. 堆叠条形图 - 替代小占比饼图
-            # 准备数据：前N条主要线路 + 其他
-            top_n = 8  # 显示前8条主要线路
-            if len(sorted_items) > top_n:
-                display_items = sorted_items[:top_n]
-                other_items = sorted_items[top_n:]
-                other_total = sum(item[1] for item in other_items)
-                display_items.append(("其他", other_total))
-            else:
-                display_items = sorted_items
-            
-            display_lines = [item[0] for item in display_items]
-            display_values = [item[1] for item in display_items]
-            
-            # 计算实际客流量用于条形图标签
-            display_actual = []
-            for line, value in zip(display_lines, display_values):
-                if line == "其他":
-                    display_actual.append(total_passenger * value / 100)
-                else:
-                    display_actual.append(total_passenger * value / 100)
-            
-            display_colors = [self.line_colors.get(line, '#CCCCCC') for line in display_lines]
-            if len(sorted_items) > top_n:
-                display_colors[-1] = '#E0E0E0'
-            
-            # 创建堆叠条形图
-            y_pos = np.arange(len(display_lines))
-            cumulative = np.zeros(len(display_lines))
-            
-            for i in range(len(display_lines)):
-                ax2.barh(y_pos[i], display_values[i], left=cumulative[i], 
-                        color=display_colors[i], edgecolor='white')
-                # 添加数值标签（占比和实际客流量）
-                if display_values[i] > 0:
-                    label_text = f'{display_values[i]:.1f}%\n({display_actual[i]:.1f}万)'
-                    ax2.text(cumulative[i] + display_values[i]/2, y_pos[i],
-                            label_text, 
-                            ha='center', va='center',
-                            color='white' if display_values[i] > 5 else 'black',
-                            fontweight='bold', fontsize=8)
-                cumulative[i] += display_values[i]
-            
-            ax2.set_yticks(y_pos)
-            ax2.set_yticklabels(display_lines, fontsize=10)
-            ax2.set_xlabel('占比 (%)', fontsize=12)
-            ax2.set_title(f'{latest_date} 南京地铁各线路客流占比\n(堆叠条形图，显示所有线路)', 
-                         fontsize=14, fontweight='bold')
-            ax2.set_xlim(0, 100)
-            
-            # 添加总客流量信息
-            fig.suptitle(f'南京地铁客流分析 - {latest_date}\n总客流量: {total_passenger:.1f}万人次', 
-                        fontsize=16, fontweight='bold', y=1.02)
-            plt.tight_layout()
-            
-            # 保存图片
-            os.makedirs('docs/images', exist_ok=True)
-            fig.savefig('docs/images/昨日客流线路占比图.png', dpi=300, bbox_inches='tight')
-            plt.close(fig)
-            
-            logger.info("改进的饼图已生成")
-            return fig
-            
-        except Exception as e:
-            logger.error(f"生成改进饼图时出错: {e}", exc_info=True)
-            return None
-    
+
     def plot_compact_pie_chart(self):
         """紧凑型饼图：更适合小屏幕查看"""
         try:
@@ -278,19 +137,8 @@ class NanjingSubwayVisualizer:
             # 按占比排序
             sorted_items = sorted(proportions.items(), key=lambda x: x[1], reverse=True)
             
-            # 只取前8条线路，其余归为"其他"
-            top_n = 8
-            if len(sorted_items) > top_n:
-                top_items = sorted_items[:top_n]
-                other_items = sorted_items[top_n:]
-                other_total = sum(item[1] for item in other_items)
-                if other_total > 0:
-                    top_items.append(("其他", other_total))
-            else:
-                top_items = sorted_items
-            
-            lines = [item[0] for item in top_items]
-            values = [item[1] for item in top_items]
+            lines = [item[0] for item in sorted_items]
+            values = [item[1] for item in sorted_items]
             
             # 计算每条线路的实际客流量
             actual_passengers = []
@@ -344,7 +192,7 @@ class NanjingSubwayVisualizer:
             
             # 保存为额外的小屏幕版本
             os.makedirs('docs/images', exist_ok=True)
-            fig.savefig('docs/images/紧凑型客流占比图.png', dpi=300, bbox_inches='tight')
+            fig.savefig('docs/images/昨日客流线路占比图.png', dpi=300, bbox_inches='tight')
             plt.close(fig)
             
             logger.info("紧凑型饼图已生成")
@@ -577,26 +425,20 @@ def main():
             # 初始化可视化器
             visualizer = NanjingSubwayVisualizer(collector)
             
-            # 1. 绘制改进的昨日客流线路占比图
-            logger.info("1. 正在绘制改进的昨日客流线路占比图...")
-            fig1 = visualizer.plot_latest_line_proportion_improved()
-            if fig1:
-                logger.info("  改进的饼图已保存")
-            
-            # 2. 绘制紧凑型饼图（适合小屏幕）
-            logger.info("2. 正在绘制紧凑型饼图...")
+            # 1. 绘制线路占比饼图（适合小屏幕）
+            logger.info("1. 正在绘制紧凑型饼图...")
             fig2 = visualizer.plot_compact_pie_chart()
             if fig2:
-                logger.info("  紧凑型饼图已保存")
+                logger.info("  线路占比饼图已保存")
             
-            # 3. 绘制最近7天站点客流强度变化趋势图
-            logger.info("3. 正在绘制最近7天站点客流强度变化趋势图...")
+            # 2. 绘制最近7天站点客流强度变化趋势图
+            logger.info("2. 正在绘制最近7天站点客流强度变化趋势图...")
             fig3 = visualizer.plot_last_n_days_line_trend(7)
             if fig3:
                 logger.info("  站点客流强度趋势图已保存")
             
-            # 4. 绘制综合分析仪表板
-            logger.info("4. 正在绘制综合分析仪表板...")
+            # 3. 绘制综合分析仪表板
+            logger.info("3. 正在绘制综合分析仪表板...")
             fig4 = visualizer.plot_comprehensive_analysis(7)
             if fig4:
                 logger.info("  综合分析仪表板已保存")
@@ -639,12 +481,12 @@ def main():
             print("="*60)
             print(f"📅 最新数据日期: {latest_date}")
             print(f"👥 总客流量: {total:.1f}万")
-            print(f"📊 生成图表数: 4张")
-            print(f"📈 图表类型: 饼图、紧凑型饼图、站点客流强度趋势图、综合分析仪表板")
+            print(f"📊 生成图表数: 3张")
+            print(f"📈 图表类型: 线路占比图、站点客流强度趋势图、综合分析仪表板")
             print(f"💾 数据文件: 最近7天客流数据.csv")
             print(f"💾 JSON文件: latest_data.json")
             print("="*60)
-            print(f"🌐 报告地址: 部署后访问 https://[用户名].github.io/[仓库名]/")
+            print(f"🌐 报告地址: 部署后访问 https://Unqualified-Developers.github.io/Nanjing-Metro/")
             print("="*60)
             
         else:
