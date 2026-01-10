@@ -148,9 +148,6 @@ class NanjingSubwayVisualizer:
             
             # 获取颜色
             colors = [self.line_colors.get(line, '#CCCCCC') for line in lines]
-            if len(sorted_items) > top_n:
-                colors[-1] = '#E0E0E0'
-            
             fig, ax = plt.subplots(figsize=(12, 10))
             
             # 使用外部的标签，避免重叠
