@@ -9,6 +9,7 @@
 ├──config.json.          # 线路配置数据
 ├──metro_data.py         # 数据处理模块
 ├──main.py               # 主程序可视化模块
+├──GetCookie              # 手动更新微博cookie
 └──requirements.txt      # 依赖包列表
 
 ```
