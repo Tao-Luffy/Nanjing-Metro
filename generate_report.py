@@ -334,7 +334,7 @@ def generate_html_report():
             <div class="stat-card blue">
                 <div class="stat-label"><i class="fas fa-subway"></i> 运营线路</div>
                 <div class="stat-value">13条</div>
-                <div class="stat-label">地铁+S线</div>
+                <div class="stat-label">市区线+郊区线</div>
             </div>
         </div>
         
