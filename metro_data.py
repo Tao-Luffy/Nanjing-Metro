@@ -1,6 +1,7 @@
 import requests
 import re
 import json
+import os
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 import pandas as pd
@@ -9,13 +10,38 @@ import pandas as pd
 class NanjingSubwayDataCollector:
     """南京地铁数据收集器"""
     
-    def __init__(self, config_file: str = "config.json"):
+    def __init__(self, config_file: str = "config.json",  cookie_file: str = "weibo_cookies.txt"):
+        self.cookie_file = cookie_file
+        self.cookie = None
+        self.driver = None
         self.passenger_records = []
         self.line_data = {}
         self.config = self.load_config(config_file)
         self.all_lines = [line["name"] for line in self.config["lines"]]
         self.line_info = {line["name"]: line for line in self.config["lines"]}
-    
+        # 初始化 Cookie
+        self._init_cookie()
+
+    def _init_cookie(self):
+        """初始化 Cookie"""
+        print("\n" + "=" * 60)
+        print("   Cookie 管理")
+        print("=" * 60 + "\n")
+
+        # 尝试加载本地 Cookie
+        self.cookie = self._load_cookie_from_file()
+        # return cookie
+
+    def _load_cookie_from_file(self) -> Optional[str]:
+        """从文件加载 Cookie"""
+        if os.path.exists(self.cookie_file):
+            try:
+                with open(self.cookie_file, 'r', encoding='utf-8') as f:
+                    return f.read().strip()
+            except Exception as e:
+                print(f"读取 Cookie 文件失败: {e}")
+        return None
+
     def load_config(self, config_file: str) -> Dict:
         """加载配置文件"""
         try:
@@ -70,22 +96,11 @@ class NanjingSubwayDataCollector:
         headers = {
             "Accept": "application/json, text/plain, */*",
             "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-            "Client-Version": "3.0.0",
-            "Cookie": "SCF=Aq-c9YP3yXfiDqh9zXt5_kpDe7HMxnxDWXB_OEknXWQPyc-YXQfU4gzOdOjDf6gqI-S_qQUh20JmwSpVLcsXcT4.; SINAGLOBAL=5652403287654.71.1766848028206; ALF=1770605672; SUB=_2A25EZc84DeRhGe5M4lIR8ijMyTqIHXVnG07wrDV8PUJbkNAYLRagkW1NdKSSYZwfZdWEYC56kgkEaEG1kuU5ge2h; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5kZs3mN9X52i3GwiBiSw_G5JpX5KMhUgL.FonE1K57eoq7eoq2dJLoIp7LxKML1KBLBKnLxKqL1hnLBoMReo.7ehzcehzc; _s_tentry=cn.bing.com; UOR=,,cn.bing.com; Apache=5531791510820.633.1768013644143; ULV=1768013644145:2:1:1:5531791510820.633.1768013644143:1766848028209; PC_TOKEN=314dc02ab5; XSRF-TOKEN=0a74qkgq2lX_Na4HvBr4YkOV; WBPSESS=krzeCBEgQh8TvPwaITf8yZ3XMZnkBuzLNUry0NLOIzWJSMDmQhlriF2HX6nC_FqvcPUpEdYaGj8QtopYstgpSZGVCw8BiVUG7OyoLDE8V4kIBcUQ6gvdNX6OKKl8MhcK4jUY9-G8TPLWaOY8lOq0Pg==",
-            "Priority": "u=1, i",
-            "Referer": "https://weibo.com/u/2638276292",
-            "Sec-Ch-Ua": "\"Microsoft Edge\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
-            "Sec-Ch-Ua-Mobile": "?0",
-            "Sec-Ch-Ua-Platform": "\"Windows\"",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-origin",
-            "Server-Version": "v2026.01.09.2",
-            "Traceparent": "00-086a5880c6db486ce488e4fa34365428-022dcfd46552ce5d-01",
+            "Accept-Language": "zh-CN,zh;q=0.9",
+            "Cookie": self.cookie,
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0",
             "X-Requested-With": "XMLHttpRequest",
-            "X-Xsrf-Token": "0a74qkgq2lX_Na4HvBr4YkOV"
+            "Referer": "https://weibo.com/u/2638276292"
         }
         
         params = {
