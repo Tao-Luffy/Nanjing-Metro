@@ -71,16 +71,21 @@ class NanjingSubwayDataCollector:
             "Accept": "application/json, text/plain, */*",
             "Accept-Encoding": "gzip, deflate, br, zstd",
             "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-            "Client-Version": "v2.47.142",
-            "Cookie": "XSRF-TOKEN=dPJyf43qgrCE7oU0r4KZK2Ya; ariaDefaultTheme=default; ariaFixed=true; ariaReadtype=1; ariaMouseten=null; ariaStatus=false; SCF=Aq-c9YP3yXfiDqh9zXt5_kpDe7HMxnxDWXB_OEknXWQPyc-YXQfU4gzOdOjDf6gqI-S_qQUh20JmwSpVLcsXcT4.; SUB=_2A25ES4Z-DeRhGe5M4lIR8ijMyTqIHXVnKIe2rDV8PUNbmtAYLXfEkW9NdKSSYXrL569k38XkwoWjJk2-fG2pmuSJ; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5kZs3mN9X52i3GwiBiSw_G5NHD95QReo.7ehzcehzcWs4DqcjMi--NiK.Xi-2Ri--ciKnRi-zN1hz4eh5ESo5ESntt; ALF=02_1769440046; WBPSESS=krzeCBEgQh8TvPwaITf8yZ3XMZnkBuzLNUry0NLOIzWJSMDmQhlriF2HX6nC_FqvcPUpEdYaGj8QtopYstgpSUUgiqFEDtDoQ0suh3Lp0dIBrdF10iLSQyFOsGz_PuYyzzeT3ZkIpkzRcnKPbArOWA==; _s_tentry=passport.weibo.com; Apache=5652403287654.71.1766848028206; SINAGLOBAL=5652403287654.71.1766848028206; ULV=1766848028209:1:1:1:5652403287654.71.1766848028206;",
-            "Referer": "https://weibo.com/u/2638276292?tabtype=feed",
+            "Client-Version": "3.0.0",
+            "Cookie": "SCF=Aq-c9YP3yXfiDqh9zXt5_kpDe7HMxnxDWXB_OEknXWQPyc-YXQfU4gzOdOjDf6gqI-S_qQUh20JmwSpVLcsXcT4.; SINAGLOBAL=5652403287654.71.1766848028206; ALF=1770605672; SUB=_2A25EZc84DeRhGe5M4lIR8ijMyTqIHXVnG07wrDV8PUJbkNAYLRagkW1NdKSSYZwfZdWEYC56kgkEaEG1kuU5ge2h; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5kZs3mN9X52i3GwiBiSw_G5JpX5KMhUgL.FonE1K57eoq7eoq2dJLoIp7LxKML1KBLBKnLxKqL1hnLBoMReo.7ehzcehzc; _s_tentry=cn.bing.com; UOR=,,cn.bing.com; Apache=5531791510820.633.1768013644143; ULV=1768013644145:2:1:1:5531791510820.633.1768013644143:1766848028209; PC_TOKEN=314dc02ab5; XSRF-TOKEN=0a74qkgq2lX_Na4HvBr4YkOV; WBPSESS=krzeCBEgQh8TvPwaITf8yZ3XMZnkBuzLNUry0NLOIzWJSMDmQhlriF2HX6nC_FqvcPUpEdYaGj8QtopYstgpSZGVCw8BiVUG7OyoLDE8V4kIBcUQ6gvdNX6OKKl8MhcK4jUY9-G8TPLWaOY8lOq0Pg==",
+            "Priority": "u=1, i",
+            "Referer": "https://weibo.com/u/2638276292",
+            "Sec-Ch-Ua": "\"Microsoft Edge\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Sec-Ch-Ua-Platform": "\"Windows\"",
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-origin",
-            "Server-Version": "v2025.12.26.3",
+            "Server-Version": "v2026.01.09.2",
+            "Traceparent": "00-086a5880c6db486ce488e4fa34365428-022dcfd46552ce5d-01",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0",
             "X-Requested-With": "XMLHttpRequest",
-            "x-xsrf-token": "dPJyf43qgrCE7oU0r4KZK2Ya"
+            "X-Xsrf-Token": "0a74qkgq2lX_Na4HvBr4YkOV"
         }
         
         params = {
