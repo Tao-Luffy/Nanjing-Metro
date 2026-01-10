@@ -177,9 +177,10 @@ def generate_html_report():
             opacity: 0.9;
         }}
         
+        /* 修改图片网格为单列布局 */
         .images-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            display: flex;
+            flex-direction: column;
             gap: 30px;
             margin-bottom: 40px;
         }}
@@ -189,7 +190,7 @@ def generate_html_report():
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.3s ease;
-            height: 350px;
+            width: 100%; /* 确保卡片宽度为100% */
         }}
         
         .image-card:hover {{
@@ -198,9 +199,10 @@ def generate_html_report():
         }}
         
         .image-card img {{
-            width: 100%;
-            height: 230px;
-            object-fit: contain;
+            width: 100%; /* 图片宽度100%填充卡片 */
+            height: auto; /* 高度自适应，保持图片原始比例 */
+            display: block; /* 防止图片下方有空白 */
+            object-fit: contain; /* 保持图片完整显示，不裁剪 */
         }}
         
         .image-card .caption {{
@@ -268,17 +270,35 @@ def generate_html_report():
             font-size: 0.9em;
         }}
         
+        /* 移动端适配 - 确保所有屏幕都单列显示 */
+        @media (max-width: 1200px) {{
+            .stats-grid {{
+                grid-template-columns: repeat(2, 1fr);
+            }}
+        }}
+        
         @media (max-width: 768px) {{
             .stats-grid {{
                 grid-template-columns: 1fr;
             }}
             
-            .images-grid {{
-                grid-template-columns: 1fr;
-            }}
-            
             .container {{
                 padding: 15px;
+            }}
+            
+            h1 {{
+                font-size: 2em;
+            }}
+            
+            .stat-value {{
+                font-size: 2em;
+            }}
+        }}
+        
+        /* 强制横屏时也保持单列 */
+        @media (orientation: landscape) {{
+            .images-grid {{
+                flex-direction: column; /* 确保横屏时也是单列 */
             }}
         }}
     </style>
@@ -321,26 +341,23 @@ def generate_html_report():
         <h2><i class="fas fa-chart-bar"></i> 可视化图表</h2>
         <div class="images-grid">
             <div class="image-card">
-                <img src="images/昨日客流线路占比图.png" alt="昨日客流线路占比">
+                <img src="images/昨日客流线路占比图.png" alt="昨日客流线路占比" style="width:100%; height:auto;">
                 <div class="caption">
                     <h3>昨日客流线路占比</h3>
-                    <p>各线路在总客流中的比例分布</p>
                 </div>
             </div>
             
             <div class="image-card">
-                <img src="images/最近7天客流强度变化趋势图.png" alt="7天站点客流强度趋势">
+                <img src="images/最近7天客流强度变化趋势图.png" alt="7天站点客流强度趋势" style="width:100%; height:auto;">
                 <div class="caption">
                     <h3>7天站点客流强度趋势</h3>
-                    <p>各线路站点客流强度变化趋势</p>
                 </div>
             </div>
             
             <div class="image-card">
-                <img src="images/综合分析仪表板.png" alt="综合分析仪表板">
+                <img src="images/综合分析仪表板.png" alt="综合分析仪表板" style="width:100%; height:auto;">
                 <div class="caption">
                     <h3>综合分析仪表板</h3>
-                    <p>多维度的数据分析视图</p>
                 </div>
             </div>
         </div>
