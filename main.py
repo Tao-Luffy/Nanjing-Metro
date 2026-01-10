@@ -172,17 +172,15 @@ class NanjingSubwayVisualizer:
                      title="线路客流信息",
                      loc="center left",
                      bbox_to_anchor=(1, 0, 0.5, 1),
-                     fontsize=9,
-                     title_fontsize=11)
+                     fontsize=20,
+                     title_fontsize=25)
             
             # 在饼图中心添加总客流量信息
             center_text = f"{latest_date}\n总客流\n{total_passenger:.1f}万"
             ax.text(0, 0, center_text,
                    ha='center', va='center',
-                   fontsize=14, fontweight='bold',
+                   fontsize=28, fontweight='bold',
                    bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8))
-            
-            ax.set_title('南京地铁客流占比分析', fontsize=16, fontweight='bold')
             ax.axis('equal')
             
             plt.tight_layout()
@@ -241,13 +239,11 @@ class NanjingSubwayVisualizer:
                                markersize=8)
             
             # 设置中文标签和标题
-            ax.set_xlabel('日期', fontsize=12, fontweight='bold')
-            ax.set_ylabel('站点客流强度（万/站）', fontsize=12, fontweight='bold')
-            ax.set_title(f'最近{n_days}天南京地铁各线路站点客流强度变化趋势\n(站点客流强度 = 客流量 ÷ 站点数)', 
-                        fontsize=14, fontweight='bold', pad=20)
+            ax.set_xlabel('日期', fontsize=20, fontweight='bold')
+            ax.set_ylabel('站点客流强度（万/站）', fontsize=20, fontweight='bold')
             
             # 添加图例
-            ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=9, title="线路(站点数)")
+            ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=20, title="线路(站点数)")
             ax.grid(True, alpha=0.3, linestyle='--')
             
             # 设置x轴标签旋转
