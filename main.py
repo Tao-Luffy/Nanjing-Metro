@@ -304,8 +304,22 @@ class NanjingSubwayVisualizer:
             
             df = df.sort_values('date')
             
-            line_columns = [col for col in df.columns if col != 'date']
-            total_passengers = df[line_columns].sum(axis=1).values
+            # 修复问题：正确计算每日总客流量
+            # 首先获取所有线路列（排除'total'和'date'）
+            line_columns = [col for col in df.columns if col not in ['total', 'date']]
+            
+            # 使用已知的线路列表，确保只计算有数据的线路
+            valid_line_columns = [col for col in line_columns if col in self.data_collector.all_lines]
+            
+            if not valid_line_columns:
+                logger.warning("没有找到有效的线路数据")
+                return None
+            
+            # 计算每日总客流量（所有线路之和）
+            total_passengers = df[valid_line_columns].sum(axis=1).values
+            
+            # 确保没有零值，避免除以零
+            total_passengers = np.where(total_passengers == 0, 1, total_passengers)
             
             fig, ax = plt.subplots(figsize=(14, 8))
             
@@ -313,6 +327,7 @@ class NanjingSubwayVisualizer:
                 if line in df.columns and df[line].notna().any():
                     color = self.line_colors.get(line, '#CCCCCC')
                     
+                    # 计算每日占比
                     proportions = (df[line].values / total_passengers) * 100
                     
                     ax.plot(df['date'], proportions, 
