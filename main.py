@@ -169,11 +169,9 @@ class NanjingSubwayVisualizer:
             
             # 将图例放在图表右侧
             ax.legend(wedges, legend_labels,
-                     title="线路客流信息",
                      loc="center left",
                      bbox_to_anchor=(1, 0, 0.5, 1),
-                     fontsize=20,
-                     title_fontsize=25)
+                     fontsize=20)
             
             # 在饼图中心添加总客流量信息
             center_text = f"{latest_date}\n总客流\n{total_passenger:.1f}万"
@@ -236,14 +234,14 @@ class NanjingSubwayVisualizer:
                                color=color,
                                marker='o',
                                linewidth=2.5,
-                               markersize=8)
+                               markersize=15)
             
             # 设置中文标签和标题
             ax.set_xlabel('日期', fontsize=20, fontweight='bold')
             ax.set_ylabel('站点客流强度（万/站）', fontsize=20, fontweight='bold')
             
             # 添加图例
-            ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=20, title="线路(站点数)")
+            ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=20)
             ax.grid(True, alpha=0.3, linestyle='--')
             
             # 设置x轴标签旋转
