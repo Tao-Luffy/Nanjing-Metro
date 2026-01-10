@@ -182,13 +182,15 @@ class NanjingSubwayVisualizer:
         try:
             self._ensure_font()
             
+            # 获取原始数据（微博是倒序的，最新的在前）
             df = self.data_collector.get_last_n_days_line_data(n_days)
             
             if df.empty:
                 logger.warning(f"没有找到最近{n_days}天的数据")
                 return None
             
-            df = df.sort_values('date')
+            # 微博数据是倒序的，我们需要反转数据以得到正确的时间顺序
+            df = df.iloc[::-1].reset_index(drop=True)
             
             fig, ax = plt.subplots(figsize=(14, 8))
             
@@ -230,13 +232,15 @@ class NanjingSubwayVisualizer:
         try:
             self._ensure_font()
             
+            # 获取原始数据（微博是倒序的，最新的在前）
             df = self.data_collector.get_last_n_days_line_data(n_days)
             
             if df.empty:
                 logger.warning(f"没有找到最近{n_days}天的数据")
                 return None
             
-            df = df.sort_values('date')
+            # 微博数据是倒序的，我们需要反转数据以得到正确的时间顺序
+            df = df.iloc[::-1].reset_index(drop=True)
             
             line_info = self.data_collector.line_info
             
@@ -296,16 +300,17 @@ class NanjingSubwayVisualizer:
         try:
             self._ensure_font()
             
+            # 获取原始数据（微博是倒序的，最新的在前）
             df = self.data_collector.get_last_n_days_line_data(n_days)
             
             if df.empty:
                 logger.warning(f"没有找到最近{n_days}天的数据")
                 return None
             
-            df = df.sort_values('date')
+            # 微博数据是倒序的，我们需要反转数据以得到正确的时间顺序
+            df = df.iloc[::-1].reset_index(drop=True)
             
-            # 修复问题：正确计算每日总客流量
-            # 首先获取所有线路列（排除'total'和'date'）
+            # 获取所有线路列（排除'total'和'date'）
             line_columns = [col for col in df.columns if col not in ['total', 'date']]
             
             # 使用已知的线路列表，确保只计算有数据的线路
