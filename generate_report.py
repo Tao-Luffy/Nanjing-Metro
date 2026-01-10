@@ -315,20 +315,20 @@ def generate_html_report():
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label"><i class="fas fa-users"></i> 最新日客流</div>
-                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}万</div>
+                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else '万'}</div>
                 <div class="stat-label">万人次</div>
             </div>
             
             <div class="stat-card green">
                 <div class="stat-label"><i class="fas fa-chart-line"></i> 7日平均</div>
-                <div class="stat-value">{avg_total if avg_total != 'N/A' else 'N/A':.1f}万</div>
+                <div class="stat-value">{avg_total:.1f}万</div>
                 <div class="stat-label">万人次</div>
             </div>
             
             <div class="stat-card orange">
-                <div class="stat-label"><i class="fas fa-arrow-up"></i> 周变化</div>
-                <div class="stat-value">{change_pct if change_pct != 'N/A' else 'N/A':.1f}%</div>
-                <div class="stat-label">与上周相比</div>
+                <div class="stat-label"><i class="fas fa-arrow-up"></i> 日变化</div>
+                <div class="stat-value">{change_pct:.1f}%</div>
+                <div class="stat-label">与昨日相比</div>
             </div>
             
             <div class="stat-card blue">
@@ -341,23 +341,30 @@ def generate_html_report():
         <h2><i class="fas fa-chart-bar"></i> 可视化图表</h2>
         <div class="images-grid">
             <div class="image-card">
-                <img src="images/昨日客流线路占比图.png" alt="昨日客流线路占比" style="width:100%; height:auto;">
+                <img src="images/昨日客流线路占比图.png" alt="昨日客流线路占比图" style="width:100%; height:auto;">
                 <div class="caption">
                     <h3>昨日客流线路占比</h3>
                 </div>
             </div>
             
             <div class="image-card">
-                <img src="images/最近7天客流强度变化趋势图.png" alt="7天站点客流强度趋势" style="width:100%; height:auto;">
+                <img src="images/最近15天总客流量变化趋势图.png" alt="总客流量变化趋势图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>7天站点客流强度趋势</h3>
+                    <h3>15天总客流量变化趋势</h3>
                 </div>
             </div>
             
             <div class="image-card">
-                <img src="images/综合分析仪表板.png" alt="综合分析仪表板" style="width:100%; height:auto;">
+                <img src="images/最近7天站点客流强度变化趋势图.png" alt="站点客流强度变化趋势图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>综合分析仪表板</h3>
+                    <h3>7天站点客流强度变化趋势</h3>
+                </div>
+            </div>
+            
+            <div class="image-card">
+                <img src="images/最近7天线路客流量占比变化趋势图.png" alt="线路客流量占比变化趋势图" style="width:100%; height:auto;">
+                <div class="caption">
+                    <h3>7天线路客流量占比变化趋势</h3>
                 </div>
             </div>
         </div>
@@ -374,6 +381,14 @@ def generate_html_report():
             
             <h3>⏰ 更新频率</h3>
             <p>每天上午10点(北京时间)自动更新分析报告。</p>
+            
+            <h3>📈 图表说明</h3>
+            <ul>
+                <li><strong>昨日客流线路占比</strong>：显示最新一日各线路客流占比情况</li>
+                <li><strong>15天总客流量变化趋势</strong>：显示最近15天总客流量的变化趋势</li>
+                <li><strong>7天站点客流强度变化趋势</strong>：显示最近7天各线路站点客流强度的变化趋势</li>
+                <li><strong>7天线路客流量占比变化趋势</strong>：显示最近7天各线路客流占比的变化趋势</li>
+            </ul>
             
             <h3>🔧 技术栈</h3>
             <ul>
