@@ -12,7 +12,7 @@
 ├──generate_report.py    # 生成报告模块
 ├──get_cookie.py         # 手动更新微博cookie
 ├──setup_fonts.py        # 设置中文字体
-├──.gitignore.           # 忽略文件
+├──.gitignore            # 忽略文件
 └──requirements.txt      # 依赖包列表
 
 ```
