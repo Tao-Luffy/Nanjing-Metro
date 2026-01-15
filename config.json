@@ -96,10 +96,5 @@
     "weibo_user_id": "2638276292",
     "search_keyword": "昨日客流",
     "max_pages": 10
-  },
-  "visualization": {
-    "default_days": 7,
-    "color_scheme": "Set3",
-    "figure_dpi": 100
   }
 }
