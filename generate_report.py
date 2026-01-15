@@ -88,6 +88,8 @@ def generate_html_report():
                                 latest_date = parts[1].strip()
             except Exception as e:
                 print(f"⚠️ 读取日志文件时出错: {e}")
+    with open("config.json", 'r', encoding='utf-8') as f:
+        quantity = len(json.load(f)["lines"])
     
     # HTML模板
     html_template = f"""
@@ -333,7 +335,7 @@ def generate_html_report():
             
             <div class="stat-card blue">
                 <div class="stat-label"><i class="fas fa-subway"></i> 运营线路</div>
-                <div class="stat-value">13条</div>
+                <div class="stat-value">{quantity}条</div>
                 <div class="stat-label">市区线+郊区线</div>
             </div>
         </div>
