@@ -310,7 +310,7 @@ def generate_html_report():
     <div class="container">
         <header>
             <h1>🚇 南京地铁客流每日分析</h1>
-            <p class="update-time">数据更新于（UTC）: {datetime.now().strftime('%Y年%m月%d日 %H:%M')}</p>
+            <p class="update-time">数据更新于（北京时间）: {(datetime.now() + timedelta(hours=8)).strftime('%Y年%m月%d日 %H:%M')}</p>
             <p class="update-time">最新数据日期: {latest_date}</p>
         </header>
         
