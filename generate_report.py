@@ -402,7 +402,7 @@ def generate_html_report():
         </div>
         
         <div class="footer">
-            <p>© {datetime.now().year} 南京地铁客流分析系统 | 自动生成 | 更新时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p>Copyright © 2025-{datetime.now().year} 南京地铁客流分析系统 | 自动生成 | 更新时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             <p>数据仅供参考，具体以官方发布为准。</p>
         </div>
     </div>
