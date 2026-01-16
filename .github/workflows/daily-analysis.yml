@@ -2,7 +2,7 @@ name: Daily Nanjing Metro Analysis
 
 on:
   schedule:
-    # 每天北京时间上午10点运行 (UTC 2:00)
+    # 每天北京时间上午10点运行
     - cron: '00 00 * * *'
   workflow_dispatch:  # 允许手动触发
   push:
