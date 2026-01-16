@@ -18,7 +18,6 @@ def generate_html_report():
     min_total = 0
     change = 0
     change_pct = 0
-    update_time = (datetime.now() + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
     
     # 尝试从多个位置读取数据
     possible_files = [
@@ -311,7 +310,7 @@ def generate_html_report():
     <div class="container">
         <header>
             <h1>🚇 南京地铁客流每日分析</h1>
-            <p class="update-time">更新时间（北京时间）: {update_time}</p>
+            <p class="update-time">更新时间（北京时间）: {(datetime.now() + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')}</p>
             <p class="update-time">最新数据日期: {latest_date}</p>
         </header>
         
@@ -404,7 +403,6 @@ def generate_html_report():
         
         <div class="footer">
             <p>Copyright © 2025-{datetime.now().year} 南京地铁客流分析系统 | 自动生成</p>
-            <p>更新时间（北京时间）: {update_time}</p>
             <p>数据仅供参考，具体以官方发布为准。</p>
         </div>
     </div>
