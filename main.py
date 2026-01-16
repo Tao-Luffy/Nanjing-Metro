@@ -204,7 +204,7 @@ class NanjingSubwayVisualizer:
             ax.set_xlabel('日期', fontsize=20, fontweight='bold')
             ax.set_ylabel('总客流量（万）', fontsize=20, fontweight='bold')
             
-            ax.legend(['总客流量'], loc='lower left', fontsize=20, title=None)
+            ax.legend(['总客流量'], loc='lower right', fontsize=20, title=None)
             ax.grid(True, alpha=0.3, linestyle='--')
             
             plt.xticks(rotation=45, ha='right', fontsize=12)
