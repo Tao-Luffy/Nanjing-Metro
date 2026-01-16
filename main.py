@@ -274,12 +274,14 @@ class NanjingSubwayVisualizer:
             
             ax.set_ylim(bottom=0)
             
-            ax.text(0.02, 0.98, '计算公式：站点客流强度 = 客流量 ÷ 站点数量',
-                   transform=ax.transAxes,
+            # 替换原有的 ax.text 代码
+            ax.text(0.95, 0.02, '计算公式：站点客流强度 = 客流量 ÷ 站点数量',
+                   transform=ax.figure.transFigure,  # 关键：坐标参照整个图
                    fontsize=9,
-                   verticalalignment='top',
+                   horizontalalignment='right',  # 文本右对齐，更整洁
+                   verticalalignment='bottom',   # 文本底部对齐
                    bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
-            
+
             plt.tight_layout()
             
             os.makedirs('docs/images', exist_ok=True)
