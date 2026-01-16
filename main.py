@@ -273,8 +273,7 @@ class NanjingSubwayVisualizer:
             plt.yticks(fontsize=12)
             
             ax.set_ylim(bottom=0)
-            
-            # 替换原有的 ax.text 代码
+
             ax.text(0.95, 0.02, '计算公式：站点客流强度 = 客流量 ÷ 站点数量',
                    transform=ax.figure.transFigure,  # 关键：坐标参照整个图
                    fontsize=9,
