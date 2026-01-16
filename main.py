@@ -277,7 +277,7 @@ class NanjingSubwayVisualizer:
             ax.text(0.98, 0.13, '计算公式：\n站点客流强度 =\n客流量 ÷ 站点数量',
                    transform=ax.figure.transFigure,  # 关键：坐标参照整个图
                    fontsize=20,
-                   horizontalalignment='right',  # 文本右对齐，更整洁
+                   horizontalalignment='left',
                    verticalalignment='bottom',   # 文本底部对齐
                    bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
 
