@@ -110,7 +110,7 @@ class NanjingSubwayVisualizer:
             pass
 
     def plot_compact_pie_chart(self):
-        """紧凑型饼图"""
+        """占比饼图"""
         try:
             self._ensure_font()
             
