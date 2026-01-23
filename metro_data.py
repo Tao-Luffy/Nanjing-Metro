@@ -302,7 +302,7 @@ class NanjingSubwayDataCollector:
     def get_last_n_days_line_data(self, n: int = None) -> pd.DataFrame:
         """获取最近n天各线路数据（DataFrame格式）"""
         if n is None:
-            n = self.config["visualization"].get("default_days", 7)
+            n = 30
         last_n_days = self.get_last_n_days(n)
         
         data = []
