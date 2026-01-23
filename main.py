@@ -394,22 +394,22 @@ def main():
                 logger.info("  线路占比饼图已保存")
             
             logger.info("2. 正在绘制总客流量变化趋势图...")
-            fig2 = visualizer.plot_total_passenger_trend(15)
+            fig2 = visualizer.plot_total_passenger_trend()
             if fig2:
                 logger.info("  总客流量变化趋势图已保存")
             
             logger.info("3. 正在绘制站点客流强度变化趋势图...")
-            fig3 = visualizer.plot_last_n_days_line_trend(7)
+            fig3 = visualizer.plot_last_n_days_line_trend()
             if fig3:
                 logger.info("  站点客流强度变化趋势图已保存")
             
             logger.info("4. 正在绘制线路客流量占比变化趋势图...")
-            fig4 = visualizer.plot_line_proportion_trend(7)
+            fig4 = visualizer.plot_line_proportion_trend()
             if fig4:
                 logger.info("  线路客流量占比变化趋势图已保存")
             
             os.makedirs('docs/data', exist_ok=True)
-            df = collector.get_last_n_days_line_data(7)
+            df = collector.get_last_n_days_line_data()
             if not df.empty:
                 df.to_csv('docs/data/最近7天客流数据.csv', index=False, encoding='utf-8-sig')
                 
