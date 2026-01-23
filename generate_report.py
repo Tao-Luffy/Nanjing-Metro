@@ -350,28 +350,28 @@ def generate_html_report():
             </div>
             
             <div class="image-card">
-                <img src="images/最近15天总客流量变化趋势图.png" alt="总客流量变化趋势图" style="width:100%; height:auto;">
+                <img src="images/最近60天总客流量变化趋势图.png" alt="总客流量变化趋势图" style="width:100%; height:auto;">
                 <div class="caption">
                     <h3>15天总客流量变化趋势</h3>
                 </div>
             </div>
             
             <div class="image-card">
-                <img src="images/最近7天站点客流强度变化趋势图.png" alt="站点客流强度变化趋势图" style="width:100%; height:auto;">
+                <img src="images/最近30天站点客流强度变化趋势图.png" alt="站点客流强度变化趋势图" style="width:100%; height:auto;">
                 <div class="caption">
                     <h3>7天站点客流强度变化趋势</h3>
                 </div>
             </div>
             
             <div class="image-card">
-                <img src="images/最近7天线路客流量占比变化趋势图.png" alt="线路客流量占比变化趋势图" style="width:100%; height:auto;">
+                <img src="images/最近30天线路客流量占比变化趋势图.png" alt="线路客流量占比变化趋势图" style="width:100%; height:auto;">
                 <div class="caption">
                     <h3>7天线路客流量占比变化趋势</h3>
                 </div>
             </div>
         </div>
         
-        <h2><i class="fas fa-table"></i> 最近7天数据</h2>
+        <h2><i class="fas fa-table"></i> 最近30天数据</h2>
         <div class="table-container">
             {df.to_html(index=False, classes='data-table') if len(df) > 0 else '<p>暂无数据</p>'}
         </div>
