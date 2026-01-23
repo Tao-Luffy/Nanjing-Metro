@@ -227,7 +227,7 @@ class NanjingSubwayVisualizer:
             logger.error(f"生成总客流量变化趋势图时出错: {e}", exc_info=True)
             return None
     
-    def plot_last_n_days_line_trend(self, n_days=7):
+    def plot_last_n_days_line_trend(self, n_days=30):
         """绘制站点客流强度变化趋势图"""
         try:
             self._ensure_font()
@@ -289,7 +289,7 @@ class NanjingSubwayVisualizer:
             logger.error(f"生成站点客流强度趋势图时出错: {e}", exc_info=True)
             return None
     
-    def plot_line_proportion_trend(self, n_days=7):
+    def plot_line_proportion_trend(self, n_days=30):
         """绘制线路客流量占比变化趋势图"""
         try:
             self._ensure_font()
