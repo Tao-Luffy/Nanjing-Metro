@@ -177,7 +177,7 @@ class NanjingSubwayVisualizer:
             logger.error(f"生成紧凑型饼图时出错: {e}", exc_info=True)
             return None
     
-    def plot_total_passenger_trend(self, n_days=15):
+    def plot_total_passenger_trend(self, n_days=30):
         """绘制总客流量变化趋势图"""
         try:
             self._ensure_font()
