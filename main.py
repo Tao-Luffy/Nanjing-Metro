@@ -487,7 +487,7 @@ def main():
             print(f"👥 总客流量: {total:.1f}万")
             print(f"📊 生成图表数: 4张")
             print(f"📈 图表类型: 线路占比饼图、总客流量变化趋势图、站点客流强度变化趋势图、线路客流量占比变化趋势图")
-            print(f"💾 数据文件: 最近7天客流数据.csv")
+            print(f"💾 数据文件: 最近客流数据.csv")
             print(f"💾 JSON文件: latest_data.json")
             print("="*60)
             print(f"🌐 报告地址: 部署后访问 https://Unqualified-Developers.github.io/Nanjing-Metro/")
