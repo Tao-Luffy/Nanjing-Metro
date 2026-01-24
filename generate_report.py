@@ -194,7 +194,7 @@ def generate_html_report():
         }}
         
         .stat-card {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #5a67d8 0%, #805ad5 30%, #6b46c1 100%);
             color: white;
             padding: 20px;
             border-radius: 8px;
@@ -202,31 +202,31 @@ def generate_html_report():
         }}
         
         .stat-card.green {{
-            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 30%, #047857 100%);
         }}
         
         .stat-card.orange {{
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 30%, #c2410c 100%);
         }}
         
         .stat-card.blue {{
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 30%, #1d4ed8 100%);
         }}
         
         .stat-card.dark-blue {{
-            background: linear-gradient(135deg, #2a6fdb 0%, #1e5db9 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 30%, #172554 100%);
         }}
         
         .stat-card.purple {{
-            background: linear-gradient(135deg, #9d50bb 0%, #6e48aa 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 30%, #6d28d9 100%);
         }}
         
         .stat-card.red {{
-            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 30%, #b91c1c 100%);
         }}
         
         .stat-card.black {{
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #374151 0%, #1f2937 30%, #111827 100%);
         }}
         
         .stat-value {{
