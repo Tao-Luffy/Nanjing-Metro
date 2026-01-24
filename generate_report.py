@@ -21,8 +21,8 @@ def generate_html_report():
     
     # 尝试从多个位置读取数据
     possible_files = [
-        'docs/data/最近7天客流数据.csv',
-        '最近7天客流数据.csv',
+        'docs/data/最近客流数据.csv',
+        '最近客流数据.csv',
         'docs/data/latest_data.json'
     ]
     
@@ -352,21 +352,21 @@ def generate_html_report():
             <div class="image-card">
                 <img src="images/最近60天总客流量变化趋势图.png" alt="总客流量变化趋势图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>15天总客流量变化趋势</h3>
+                    <h3>总客流量变化趋势</h3>
                 </div>
             </div>
             
             <div class="image-card">
                 <img src="images/最近30天站点客流强度变化趋势图.png" alt="站点客流强度变化趋势图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>7天站点客流强度变化趋势</h3>
+                    <h3>站点客流强度变化趋势</h3>
                 </div>
             </div>
             
             <div class="image-card">
                 <img src="images/最近30天线路客流量占比变化趋势图.png" alt="线路客流量占比变化趋势图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>7天线路客流量占比变化趋势</h3>
+                    <h3>线路客流量占比变化趋势</h3>
                 </div>
             </div>
         </div>
