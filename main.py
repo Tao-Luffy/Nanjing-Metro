@@ -287,10 +287,10 @@ class NanjingSubwayVisualizer:
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
                      bbox_to_anchor=(0, -0.36, 1, 0.2),
-                     ncol=min(6, len(legend_labels)),  # 最多6列，根据线路数量调整
+                     ncol=min(4, len(legend_labels)),  # 最多4列，根据线路数量调整
                      mode="expand",
                      borderaxespad=0,
-                     fontsize=14,
+                     fontsize=20,
                      frameon=True,
                      fancybox=True,
                      shadow=True)
@@ -382,10 +382,10 @@ class NanjingSubwayVisualizer:
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
                      bbox_to_anchor=(0, -0.36, 1, 0.2),
-                     ncol=min(6, len(legend_labels)),  # 最多6列，根据线路数量调整
+                     ncol=min(4, len(legend_labels)),  # 最多4列，根据线路数量调整
                      mode="expand",
                      borderaxespad=0,
-                     fontsize=14,
+                     fontsize=20,
                      frameon=True,
                      fancybox=True,
                      shadow=True)
