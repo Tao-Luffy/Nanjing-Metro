@@ -121,7 +121,7 @@ def generate_html_report():
         elif value < 0:
             return f"-{value:.3f}%"
         else:
-            return f"{value:.f}%"
+            return f"{value:.3f}%"
     
     # 格式化增减量显示，添加+/-符号和单位
     def format_change_amount(value):
