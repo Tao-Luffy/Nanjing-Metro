@@ -17,7 +17,9 @@ def generate_html_report():
     max_total = 0
     min_total = 0
     day_change_pct = 0
+    day_change_amount = 0
     week_change_pct = 0
+    week_change_amount = 0
     
     # 尝试从多个位置读取数据
     possible_files = [
@@ -58,13 +60,13 @@ def generate_html_report():
         
         # 计算日环比（与昨日相比）
         if len(df) > 1:
-            day_change = df['total'].iloc[0] - df['total'].iloc[1]
-            day_change_pct = (day_change / df['total'].iloc[1] * 100) if df['total'].iloc[1] != 0 else 0
+            day_change_amount = df['total'].iloc[0] - df['total'].iloc[1]
+            day_change_pct = (day_change_amount / df['total'].iloc[1] * 100) if df['total'].iloc[1] != 0 else 0
         
         # 计算周同比（与上周同一天相比，假设数据是连续的）
         if len(df) > 7:
-            week_change = df['total'].iloc[0] - df['total'].iloc[7]
-            week_change_pct = (week_change / df['total'].iloc[7] * 100) if df['total'].iloc[7] != 0 else 0
+            week_change_amount = df['total'].iloc[0] - df['total'].iloc[7]
+            week_change_pct = (week_change_amount / df['total'].iloc[7] * 100) if df['total'].iloc[7] != 0 else 0
         
         # 重命名列名为中文
         df = df.rename(columns={
@@ -119,7 +121,20 @@ def generate_html_report():
         elif value < 0:
             return f"{value:.3f}%"
         else:
-            return f"{value:.3f}%"
+            return f"{value:.f}%"
+    
+    # 格式化增减量显示，添加+/-符号和单位
+    def format_change_amount(value):
+        if value > 0:
+            return f"(+{abs(value)}万)"
+        elif value < 0:
+            return f"(-{abs(value)}万)"
+        else:
+            return f"({abs(value)}万)"
+    
+    # 组合百分比和增减量
+    def format_change_with_amount(pct_value, amount_value):
+        return f"{format_change_pct(pct_value)} {format_change_amount(amount_value)}"
     
     # HTML模板
     html_template = f"""
@@ -223,6 +238,12 @@ def generate_html_report():
         .stat-label {{
             font-size: 0.9em;
             opacity: 0.9;
+        }}
+        
+        .change-detail {{
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-top: 5px;
         }}
         
         /* 修改图片网格为单列布局 */
@@ -375,13 +396,13 @@ def generate_html_report():
             
             <div class="stat-card {day_color}">
                 <div class="stat-label"><i class="fas fa-exchange-alt"></i> 日环比</div>
-                <div class="stat-value">{format_change_pct(day_change_pct)}</div>
+                <div class="stat-value">{format_change_with_amount(day_change_pct, day_change_amount)}</div>
                 <div class="stat-label">与昨日相比</div>
             </div>
             
             <div class="stat-card {week_color}">
                 <div class="stat-label"><i class="fas fa-calendar-week"></i> 周同比</div>
-                <div class="stat-value">{format_change_pct(week_change_pct)}</div>
+                <div class="stat-value">{format_change_with_amount(week_change_pct, week_change_amount)}</div>
                 <div class="stat-label">与上周同期相比</div>
             </div>
             
