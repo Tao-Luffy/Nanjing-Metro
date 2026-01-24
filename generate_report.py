@@ -198,6 +198,10 @@ def generate_html_report():
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }}
         
+        .stat-card.dark-blue {{
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }}
+        
         .stat-card.purple {{
             background: linear-gradient(135deg, #9d50bb 0%, #6e48aa 100%);
         }}
@@ -206,8 +210,8 @@ def generate_html_report():
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
         }}
         
-        .stat-card.gray {{
-            background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+        .stat-card.black {{
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
         }}
         
         .stat-value {{
@@ -363,7 +367,7 @@ def generate_html_report():
                 <div class="stat-label">万人次</div>
             </div>
             
-            <div class="stat-card green">
+            <div class="stat-card orange">
                 <div class="stat-label"><i class="fas fa-chart-line"></i> 7日平均</div>
                 <div class="stat-value">{avg_total:.1f}万</div>
                 <div class="stat-label">万人次</div>
@@ -381,7 +385,7 @@ def generate_html_report():
                 <div class="stat-label">与上周同期相比</div>
             </div>
             
-            <div class="stat-card blue">
+            <div class="stat-card dark-blue">
                 <div class="stat-label"><i class="fas fa-subway"></i> 运营线路</div>
                 <div class="stat-value">{quantity}条</div>
                 <div class="stat-label">市区线+郊区线</div>
