@@ -282,11 +282,11 @@ class NanjingSubwayVisualizer:
             ax.set_ylim(bottom=0)
 
             # 将图例放在图表下方，横向排列
-            # 调整图例位置：bbox_to_anchor=(0, -0.5, 1, 0.2) 表示：
-            # 左对齐(0)，在图表下方(-0.5)，宽度占满(1)，高度为0.2
+            # 调整图例位置：bbox_to_anchor=(0, -0.4, 1, 0.2) 表示：
+            # 左对齐(0)，在图表下方(-0.4)，宽度占满(1)，高度为0.2
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
-                     bbox_to_anchor=(0, -0.5, 1, 0.2),
+                     bbox_to_anchor=(0, -0.4, 1, 0.2),
                      ncol=min(6, len(legend_labels)),  # 最多6列，根据线路数量调整
                      mode="expand",
                      borderaxespad=0,
@@ -377,11 +377,11 @@ class NanjingSubwayVisualizer:
             ax.set_ylim(bottom=0)
             
             # 将图例放在图表下方，横向排列
-            # 调整图例位置：bbox_to_anchor=(0, -0.5, 1, 0.2) 表示：
-            # 左对齐(0)，在图表下方(-0.5)，宽度占满(1)，高度为0.2
+            # 调整图例位置：bbox_to_anchor=(0, -0.4, 1, 0.2) 表示：
+            # 左对齐(0)，在图表下方(-0.4)，宽度占满(1)，高度为0.2
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
-                     bbox_to_anchor=(0, -0.5, 1, 0.2),
+                     bbox_to_anchor=(0, -0.4, 1, 0.2),
                      ncol=min(6, len(legend_labels)),  # 最多6列，根据线路数量调整
                      mode="expand",
                      borderaxespad=0,
