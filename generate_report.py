@@ -126,11 +126,11 @@ def generate_html_report():
     # 格式化增减量显示，添加+/-符号和单位
     def format_change_amount(value):
         if value > 0:
-            return f"(+{abs(value)}万)"
+            return f"(+{abs(value):.1f}万)"
         elif value < 0:
-            return f"(-{abs(value)}万)"
+            return f"(-{abs(value):.1f}万)"
         else:
-            return f"({abs(value)}万)"
+            return f"({abs(value):.1f}万)"
     
     # 组合百分比和增减量
     def format_change_with_amount(pct_value, amount_value):
