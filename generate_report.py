@@ -202,7 +202,7 @@ def generate_html_report():
         }}
         
         .stat-card.green {{
-            background: linear-gradient(135deg, #6ee7b7 0%, #34d399 30%, #10b981 100%);
+            background: linear-gradient(135deg, #6ce4b4 0%, #31d096 30%, #0eb67d 100%);
         }}
         
         .stat-card.orange {{
