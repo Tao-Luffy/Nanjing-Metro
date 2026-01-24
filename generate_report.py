@@ -376,31 +376,6 @@ def generate_html_report():
             {df.to_html(index=False, classes='data-table') if len(df) > 0 else '<p>暂无数据</p>'}
         </div>
         
-        <h2><i class="fas fa-info-circle"></i> 使用说明</h2>
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-            <h3>📊 数据来源</h3>
-            <p>数据来源于微博公开数据，每日自动更新。</p>
-            
-            <h3>⏰ 更新频率</h3>
-            <p>每天上午10点(北京时间)自动更新分析报告。</p>
-            
-            <h3>📈 图表说明</h3>
-            <ul>
-                <li><strong>昨日客流线路占比</strong>：显示最新一日各线路客流占比情况</li>
-                <li><strong>15天总客流量变化趋势</strong>：显示最近15天总客流量的变化趋势</li>
-                <li><strong>7天站点客流强度变化趋势</strong>：显示最近7天各线路站点客流强度的变化趋势</li>
-                <li><strong>7天线路客流量占比变化趋势</strong>：显示最近7天各线路客流占比的变化趋势</li>
-            </ul>
-            
-            <h3>🔧 技术栈</h3>
-            <ul>
-                <li>Python 数据采集与处理</li>
-                <li>Matplotlib 可视化</li>
-                <li>GitHub Actions 自动化</li>
-                <li>GitHub Pages 部署展示</li>
-            </ul>
-        </div>
-        
         <div class="footer">
             <p>Copyright © 2025-{datetime.now().year} 南京地铁客流分析系统 | 自动生成</p>
             <p>数据仅供参考，具体以官方发布为准。</p>
