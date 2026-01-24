@@ -119,7 +119,7 @@ def generate_html_report():
         if value > 0:
             return f"+{value:.3f}%"
         elif value < 0:
-            return f"-{value:.3f}%"
+            return f"{value:.3f}%"
         else:
             return f"{value:.3f}%"
     
