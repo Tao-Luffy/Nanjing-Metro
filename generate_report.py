@@ -194,7 +194,7 @@ def generate_html_report():
         }}
         
         .stat-card {{
-            background: linear-gradient(135deg, #5a67d8 0%, #805ad5 30%, #6b46c1 100%);
+            background: linear-gradient(135deg, #a5b4fc 0%, #8b5cf6 30%, #7c3aed 100%);
             color: white;
             padding: 20px;
             border-radius: 8px;
@@ -202,31 +202,31 @@ def generate_html_report():
         }}
         
         .stat-card.green {{
-            background: linear-gradient(135deg, #10b981 0%, #059669 30%, #047857 100%);
+            background: linear-gradient(135deg, #6ee7b7 0%, #34d399 30%, #10b981 100%);
         }}
         
         .stat-card.orange {{
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 30%, #c2410c 100%);
+            background: linear-gradient(135deg, #fdba74 0%, #fb923c 30%, #f97316 100%);
         }}
         
         .stat-card.blue {{
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 30%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 30%, #3b82f6 100%);
         }}
         
         .stat-card.dark-blue {{
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 30%, #172554 100%);
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 30%, #2563eb 100%);
         }}
         
         .stat-card.purple {{
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 30%, #6d28d9 100%);
+            background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 30%, #8b5cf6 100%);
         }}
         
         .stat-card.red {{
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 30%, #b91c1c 100%);
+            background: linear-gradient(135deg, #fca5a5 0%, #f87171 30%, #ef4444 100%);
         }}
         
         .stat-card.black {{
-            background: linear-gradient(135deg, #374151 0%, #1f2937 30%, #111827 100%);
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 30%, #4b5563 100%);
         }}
         
         .stat-value {{
