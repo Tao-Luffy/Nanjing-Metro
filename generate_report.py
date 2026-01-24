@@ -115,11 +115,11 @@ def generate_html_report():
     # 格式化百分比显示，添加+/-符号
     def format_change_pct(value):
         if value > 0:
-            return f"+{value:.2f}%"
+            return f"+{value:.3f}%"
         elif value < 0:
-            return f"{value:.2f}%"
+            return f"{value:.3f}%"
         else:
-            return f"{value:.2f}%"
+            return f"{value:.3f}%"
     
     # HTML模板
     html_template = f"""
