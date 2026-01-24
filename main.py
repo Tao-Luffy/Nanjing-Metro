@@ -296,7 +296,7 @@ class NanjingSubwayVisualizer:
                      shadow=True)
             
             # 调整布局，为底部图例留出更多空间
-            plt.tight_layout(rect=[0, 0.1, 1, 0.95])  # 底部留出10%的空间
+            plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出10%的空间
             
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/最近{n_days}天站点客流强度变化趋势图.png', 
@@ -391,7 +391,7 @@ class NanjingSubwayVisualizer:
                      shadow=True)
             
             # 调整布局，为底部图例留出更多空间
-            plt.tight_layout(rect=[0, 0.1, 1, 0.95])  # 底部留出10%的空间
+            plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出10%的空间
             
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/最近{n_days}天线路客流量占比变化趋势图.png', 
