@@ -170,11 +170,11 @@ class NanjingSubwayVisualizer:
             fig.savefig('docs/images/昨日客流线路占比图.png', dpi=300, bbox_inches='tight')
             plt.close(fig)
             
-            logger.info("紧凑型饼图已生成")
+            logger.info("占比饼图已生成")
             return fig
             
         except Exception as e:
-            logger.error(f"生成紧凑型饼图时出错: {e}", exc_info=True)
+            logger.error(f"生成占比饼图时出错: {e}", exc_info=True)
             return None
     
     def plot_total_passenger_trend(self, n_days=60):
@@ -411,7 +411,7 @@ def main():
             os.makedirs('docs/data', exist_ok=True)
             df = collector.get_last_n_days_line_data()
             if not df.empty:
-                df.to_csv('docs/data/最近7天客流数据.csv', index=False, encoding='utf-8-sig')
+                df.to_csv('docs/data/最近客流数据.csv', index=False, encoding='utf-8-sig')
                 
                 json_data = {
                     'latest_date': latest_date,
