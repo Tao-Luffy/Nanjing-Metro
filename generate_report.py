@@ -390,7 +390,7 @@ def generate_html_report():
             
             <div class="stat-card orange">
                 <div class="stat-label"><i class="fas fa-chart-line"></i> 7日平均</div>
-                <div class="stat-value">{avg_total:.1f}万</div>
+                <div class="stat-value">{avg_total:.2f}万</div>
                 <div class="stat-label">万人次</div>
             </div>
             
