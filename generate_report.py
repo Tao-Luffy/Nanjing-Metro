@@ -16,8 +16,8 @@ def generate_html_report():
     avg_total = 0
     max_total = 0
     min_total = 0
-    change = 0
-    change_pct = 0
+    day_change_pct = 0
+    week_change_pct = 0
     
     # 尝试从多个位置读取数据
     possible_files = [
@@ -55,9 +55,16 @@ def generate_html_report():
         avg_total = df['total'].mean()
         max_total = df['total'].max()
         min_total = df['total'].min()
+        
+        # 计算日环比（与昨日相比）
         if len(df) > 1:
-            change = df['total'].iloc[0] - df['total'].iloc[1]
-            change_pct = (change / df['total'].iloc[1] * 100) if df['total'].iloc[1] != 0 else 0
+            day_change = df['total'].iloc[0] - df['total'].iloc[1]
+            day_change_pct = (day_change / df['total'].iloc[1] * 100) if df['total'].iloc[1] != 0 else 0
+        
+        # 计算周同比（与上周同一天相比，假设数据是连续的）
+        if len(df) > 7:
+            week_change = df['total'].iloc[0] - df['total'].iloc[7]
+            week_change_pct = (week_change / df['total'].iloc[7] * 100) if df['total'].iloc[7] != 0 else 0
         
         # 重命名列名为中文
         df = df.rename(columns={
@@ -88,8 +95,31 @@ def generate_html_report():
                                 latest_date = parts[1].strip()
             except Exception as e:
                 print(f"⚠️ 读取日志文件时出错: {e}")
+    
     with open("config.json", 'r', encoding='utf-8') as f:
-        quantity = len(json.load(f)["lines"])
+        config_data = json.load(f)
+        quantity = len(config_data["lines"])
+    
+    # 确定日环比和周同比的颜色
+    def get_change_color(value):
+        if value > 0:
+            return "red"  # 上涨用红色
+        elif value < 0:
+            return "green"  # 下降用绿色
+        else:
+            return "black"  # 持平用黑色
+    
+    day_color = get_change_color(day_change_pct)
+    week_color = get_change_color(week_change_pct)
+    
+    # 格式化百分比显示，添加+/-符号
+    def format_change_pct(value):
+        if value > 0:
+            return f"+{value:.2f}%"
+        elif value < 0:
+            return f"{value:.2f}%"
+        else:
+            return f"{value:.2f}%"
     
     # HTML模板
     html_template = f"""
@@ -143,7 +173,7 @@ def generate_html_report():
         
         .stats-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }}
@@ -166,6 +196,18 @@ def generate_html_report():
         
         .stat-card.blue {{
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }}
+        
+        .stat-card.purple {{
+            background: linear-gradient(135deg, #9d50bb 0%, #6e48aa 100%);
+        }}
+        
+        .stat-card.red {{
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        }}
+        
+        .stat-card.gray {{
+            background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
         }}
         
         .stat-value {{
@@ -327,10 +369,16 @@ def generate_html_report():
                 <div class="stat-label">万人次</div>
             </div>
             
-            <div class="stat-card orange">
-                <div class="stat-label"><i class="fas fa-arrow-up"></i> 日变化</div>
-                <div class="stat-value">{change_pct:.1f}%</div>
+            <div class="stat-card {day_color}">
+                <div class="stat-label"><i class="fas fa-exchange-alt"></i> 日环比</div>
+                <div class="stat-value">{format_change_pct(day_change_pct)}</div>
                 <div class="stat-label">与昨日相比</div>
+            </div>
+            
+            <div class="stat-card {week_color}">
+                <div class="stat-label"><i class="fas fa-calendar-week"></i> 周同比</div>
+                <div class="stat-value">{format_change_pct(week_change_pct)}</div>
+                <div class="stat-label">与上周同期相比</div>
             </div>
             
             <div class="stat-card blue">
