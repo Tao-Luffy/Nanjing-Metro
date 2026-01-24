@@ -292,8 +292,7 @@ class NanjingSubwayVisualizer:
                      borderaxespad=0,
                      fontsize=20,
                      frameon=True,
-                     fancybox=True,
-                     shadow=True)
+                     fancybox=True)
             
             # 调整布局，为底部图例留出更多空间
             plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出20%的空间
@@ -387,8 +386,7 @@ class NanjingSubwayVisualizer:
                      borderaxespad=0,
                      fontsize=20,
                      frameon=True,
-                     fancybox=True,
-                     shadow=True)
+                     fancybox=True)
             
             # 调整布局，为底部图例留出更多空间
             plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出20%的空间
