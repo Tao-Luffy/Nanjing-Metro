@@ -245,7 +245,7 @@ class NanjingSubwayVisualizer:
             line_info = self.data_collector.line_info
             
             # 增大图表高度，为底部图例留出空间
-            fig, ax = plt.subplots(figsize=(14, 9))
+            fig, ax = plt.subplots(figsize=(14, 12))
             
             # 存储图例信息
             legend_handles = []
@@ -282,8 +282,8 @@ class NanjingSubwayVisualizer:
             ax.set_ylim(bottom=0)
 
             # 将图例放在图表下方，横向排列
-            # 调整图例位置：bbox_to_anchor=(0, -0.25, 1, 0.2) 表示：
-            # 左对齐(0)，在图表下方(-0.25)，宽度占满(1)，高度为0.2
+            # 调整图例位置：bbox_to_anchor=(0, -0.5, 1, 0.2) 表示：
+            # 左对齐(0)，在图表下方(-0.5)，宽度占满(1)，高度为0.2
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
                      bbox_to_anchor=(0, -0.5, 1, 0.2),
@@ -296,7 +296,7 @@ class NanjingSubwayVisualizer:
                      shadow=True)
             
             # 调整布局，为底部图例留出更多空间
-            plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出10%的空间
+            plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出20%的空间
             
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/最近{n_days}天站点客流强度变化趋势图.png', 
@@ -343,7 +343,7 @@ class NanjingSubwayVisualizer:
             total_passengers = np.where(total_passengers == 0, 1, total_passengers)
             
             # 增大图表高度，为底部图例留出空间
-            fig, ax = plt.subplots(figsize=(14, 9))
+            fig, ax = plt.subplots(figsize=(14, 12))
             
             # 存储图例信息
             legend_handles = []
@@ -377,8 +377,8 @@ class NanjingSubwayVisualizer:
             ax.set_ylim(bottom=0)
             
             # 将图例放在图表下方，横向排列
-            # 调整图例位置：bbox_to_anchor=(0, -0.25, 1, 0.2) 表示：
-            # 左对齐(0)，在图表下方(-0.25)，宽度占满(1)，高度为0.2
+            # 调整图例位置：bbox_to_anchor=(0, -0.5, 1, 0.2) 表示：
+            # 左对齐(0)，在图表下方(-0.5)，宽度占满(1)，高度为0.2
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
                      bbox_to_anchor=(0, -0.5, 1, 0.2),
@@ -391,7 +391,7 @@ class NanjingSubwayVisualizer:
                      shadow=True)
             
             # 调整布局，为底部图例留出更多空间
-            plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出10%的空间
+            plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出20%的空间
             
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/最近{n_days}天线路客流量占比变化趋势图.png', 
