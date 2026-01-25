@@ -194,7 +194,7 @@ def generate_html_report():
         }}
         
         .stat-card {{
-            background: linear-gradient(135deg, #ec4899 0%, #a855f7 30%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
             color: white;
             padding: 20px;
             border-radius: 8px;
@@ -202,31 +202,31 @@ def generate_html_report():
         }}
         
         .stat-card.green {{
-            background: linear-gradient(135deg, #22d3ee 0%, #2dd4bf 30%, #10b981 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
         }}
         
         .stat-card.orange {{
-            background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 30%, #f97316 100%);
+            background: linear-gradient(135deg, #fde68a 0%, #f97316 100%);
         }}
         
         .stat-card.blue {{
-            background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 30%, #3b82f6 100%);
+            background: linear-gradient(135deg, #93c5fd 0%, #3b82f6 100%);
         }}
         
         .stat-card.dark-blue {{
-            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 30%, #3b82f6 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
         }}
         
         .stat-card.purple {{
-            background: linear-gradient(135deg, #d8b4fe 0%, #c084fc 30%, #a855f7 100%);
+            background: linear-gradient(135deg, #d8b4fe 0%, #a855f7 100%);
         }}
         
         .stat-card.red {{
-            background: linear-gradient(135deg, #fdba74 0%, #fb923c 30%, #ef4444 100%);
+            background: linear-gradient(135deg, #fdba74 0%, #ef4444 100%);
         }}
         
         .stat-card.black {{
-            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 30%, #6b7280 100%);
+            background: linear-gradient(135deg, #d1d5db 0%, #6b7280 100%);
         }}
         
         .stat-value {{
@@ -457,12 +457,12 @@ def generate_html_report():
 </body>
 </html>
 """
-    
+
     # 保存HTML文件
     os.makedirs('docs', exist_ok=True)
     with open('docs/index.html', 'w', encoding='utf-8') as f:
         f.write(html_template)
-    
+
     print("HTML报告已生成")
 
 if __name__ == "__main__":
