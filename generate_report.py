@@ -194,7 +194,7 @@ def generate_html_report():
         }}
         
         .stat-card {{
-            background: linear-gradient(135deg, #a5b4fc 0%, #8b5cf6 30%, #7c3aed 100%);
+            background: linear-gradient(135deg, #ec4899 0%, #a855f7 30%, #8b5cf6 100%);
             color: white;
             padding: 20px;
             border-radius: 8px;
@@ -202,11 +202,11 @@ def generate_html_report():
         }}
         
         .stat-card.green {{
-            background: linear-gradient(135deg, #6ce4b4 0%, #31d096 30%, #0eb67d 100%);
+            background: linear-gradient(135deg, #22d3ee 0%, #2dd4bf 30%, #10b981 100%);
         }}
         
         .stat-card.orange {{
-            background: linear-gradient(135deg, #fdba74 0%, #fb923c 30%, #f97316 100%);
+            background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 30%, #f97316 100%);
         }}
         
         .stat-card.blue {{
@@ -214,19 +214,19 @@ def generate_html_report():
         }}
         
         .stat-card.dark-blue {{
-            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 30%, #2563eb 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 30%, #3b82f6 100%);
         }}
         
         .stat-card.purple {{
-            background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 30%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #d8b4fe 0%, #c084fc 30%, #a855f7 100%);
         }}
         
         .stat-card.red {{
-            background: linear-gradient(135deg, #fca5a5 0%, #f87171 30%, #ef4444 100%);
+            background: linear-gradient(135deg, #fdba74 0%, #fb923c 30%, #ef4444 100%);
         }}
         
         .stat-card.black {{
-            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 30%, #4b5563 100%);
+            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 30%, #6b7280 100%);
         }}
         
         .stat-value {{
