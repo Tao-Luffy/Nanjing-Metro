@@ -98,9 +98,22 @@ def generate_html_report():
             except Exception as e:
                 print(f"⚠️ 读取日志文件时出错: {e}")
     
+    # 读取config.json数据
     with open("config.json", 'r', encoding='utf-8') as f:
         config_data = json.load(f)
-        quantity = len(config_data["lines"])
+        lines = config_data["lines"]
+        quantity = len(lines)
+        
+        # 计算总站点数
+        total_stations = sum(line.get("stations", 0) for line in lines)
+    
+    # 计算站点客流强度
+    station_intensity = 0
+    if latest_total != "N/A" and total_stations > 0:
+        # 将万转换为实际人数，然后除以站点数
+        station_intensity = (latest_total * 10000) / total_stations
+        # 格式化为整数
+        station_intensity = int(station_intensity)
     
     # 确定日环比和周同比的颜色
     def get_change_color(value):
@@ -217,6 +230,10 @@ def generate_html_report():
             background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
         }}
         
+        .stat-card.green-purple {{
+            background: linear-gradient(135deg, #10b981 0%, #8b5cf6 100%);
+        }}
+        
         .stat-card.purple {{
             background: linear-gradient(135deg, #d8b4fe 0%, #a855f7 100%);
         }}
@@ -238,6 +255,13 @@ def generate_html_report():
         .stat-label {{
             font-size: 0.9em;
             opacity: 0.9;
+        }}
+        
+        .stat-sublabel {{
+            font-size: 0.7em;
+            opacity: 0.8;
+            margin-top: 5px;
+            font-style: italic;
         }}
         
         .change-detail {{
@@ -388,6 +412,12 @@ def generate_html_report():
                 <div class="stat-label">万人次</div>
             </div>
             
+            <div class="stat-card green-purple">
+                <div class="stat-label"><i class="fas fa-chart-area"></i> 昨日站点客流强度</div>
+                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}{'' if station_intensity == 0 else '人/站'}</div>
+                <div class="stat-sublabel">站点客流强度=总客流量÷总站点数</div>
+            </div>
+            
             <div class="stat-card orange">
                 <div class="stat-label"><i class="fas fa-chart-line"></i> 7日平均</div>
                 <div class="stat-value">{avg_total:.2f}万</div>
@@ -408,7 +438,7 @@ def generate_html_report():
             
             <div class="stat-card dark-blue">
                 <div class="stat-label"><i class="fas fa-subway"></i> 运营线路</div>
-                <div class="stat-value">{quantity}条</div>
+                <div class="stat-value">{quantity}条 ({total_stations}站)</div>
                 <div class="stat-label">市区线+郊区线</div>
             </div>
         </div>
@@ -457,12 +487,12 @@ def generate_html_report():
 </body>
 </html>
 """
-
+    
     # 保存HTML文件
     os.makedirs('docs', exist_ok=True)
     with open('docs/index.html', 'w', encoding='utf-8') as f:
         f.write(html_template)
-
+    
     print("HTML报告已生成")
 
 if __name__ == "__main__":
