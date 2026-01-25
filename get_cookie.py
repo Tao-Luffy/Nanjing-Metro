@@ -170,6 +170,7 @@ def main():
     except Exception as e:
         print(f"\n❌ 程序异常: {e}")
     finally:
+        #关闭窗口
         weibo.close()
 
 
