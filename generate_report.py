@@ -408,7 +408,7 @@ def generate_html_report():
             <div class="stat-card green-purple">
                 <div class="stat-label"><i class="fas fa-chart-area"></i> 昨日站点客流强度</div>
                 <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}{'' if station_intensity == 0 else '人/站'}</div>
-                <div class=stat-label">站点客流强度=总客流量÷总站点数</div>
+                <div class="stat-label">站点客流强度=总客流量÷总站点数</div>
             </div>
             
             <div class="stat-card orange">
