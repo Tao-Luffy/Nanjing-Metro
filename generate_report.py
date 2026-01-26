@@ -256,14 +256,7 @@ def generate_html_report():
             font-size: 0.9em;
             opacity: 0.9;
         }}
-        
-        .stat-sublabel {{
-            font-size: 0.7em;
-            opacity: 0.8;
-            margin-top: 5px;
-            font-style: italic;
-        }}
-        
+
         .change-detail {{
             font-size: 0.8em;
             opacity: 0.9;
@@ -415,7 +408,7 @@ def generate_html_report():
             <div class="stat-card green-purple">
                 <div class="stat-label"><i class="fas fa-chart-area"></i> 昨日站点客流强度</div>
                 <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}{'' if station_intensity == 0 else '人/站'}</div>
-                <div class="stat-sublabel">站点客流强度=总客流量÷总站点数</div>
+                <div class=stat-label">站点客流强度=总客流量÷总站点数</div>
             </div>
             
             <div class="stat-card orange">
