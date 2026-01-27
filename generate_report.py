@@ -169,16 +169,13 @@ def generate_html_report():
             line-height: 1.6;
             color: #333;
             background-color: #f5f5f5;
-            padding: 20px;
         }}
         
         .container {{
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 30px;
+            padding: 20px;
         }}
         
         header {{
@@ -201,7 +198,7 @@ def generate_html_report():
         
         .stats-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }}
@@ -212,6 +209,7 @@ def generate_html_report():
             padding: 20px;
             border-radius: 8px;
             text-align: center;
+            min-width: 340px;
         }}
         
         .stat-card.green {{
@@ -221,11 +219,7 @@ def generate_html_report():
         .stat-card.orange {{
             background: linear-gradient(135deg, #fde68a 0%, #f97316 100%);
         }}
-        
-        .stat-card.blue {{
-            background: linear-gradient(135deg, #93c5fd 0%, #3b82f6 100%);
-        }}
-        
+
         .stat-card.dark-blue {{
             background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
         }}
@@ -250,13 +244,19 @@ def generate_html_report():
             font-size: 2.5em;
             font-weight: bold;
             margin: 10px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }}
         
         .stat-label {{
             font-size: 0.9em;
             opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }}
-
+        
         .change-detail {{
             font-size: 0.8em;
             opacity: 0.9;
@@ -356,8 +356,14 @@ def generate_html_report():
             font-size: 0.9em;
         }}
         
-        /* 移动端适配 - 确保所有屏幕都单列显示 */
-        @media (max-width: 1200px) {{
+        /* 移动端适配 - 调整列数显示 */
+        @media (max-width: 1400px) {{
+            .stats-grid {{
+                grid-template-columns: repeat(3, 1fr);
+            }}
+        }}
+        
+        @media (max-width: 1100px) {{
             .stats-grid {{
                 grid-template-columns: repeat(2, 1fr);
             }}
@@ -366,6 +372,10 @@ def generate_html_report():
         @media (max-width: 768px) {{
             .stats-grid {{
                 grid-template-columns: 1fr;
+            }}
+            
+            .stat-card {{
+                min-width: auto;
             }}
             
             .container {{
