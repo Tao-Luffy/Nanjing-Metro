@@ -139,15 +139,15 @@ def generate_html_report():
     # 格式化增减量显示，添加+/-符号和单位
     def format_change_amount(value):
         if value > 0:
-            return f"(+{abs(value):.1f}万)"
+            return f"+{abs(value):.1f}万"
         elif value < 0:
-            return f"(-{abs(value):.1f}万)"
+            return f"-{abs(value):.1f}万"
         else:
-            return f"({abs(value):.1f}万)"
+            return f"{abs(value):.1f}万"
     
-    # 组合百分比和增减量
+    # 组合百分比和增减量，分行显示
     def format_change_with_amount(pct_value, amount_value):
-        return f"{format_change_pct(pct_value)} {format_change_amount(amount_value)}"
+        return f"{format_change_pct(pct_value)}<br>{format_change_amount(amount_value)}"
     
     # HTML模板
     html_template = f"""
@@ -247,6 +247,12 @@ def generate_html_report():
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }}
+        
+        /* 同比环比卡片允许换行 */
+        .change-card .stat-value {{
+            white-space: normal;
+            line-height: 1.3;
         }}
         
         .stat-label {{
@@ -389,6 +395,11 @@ def generate_html_report():
             .stat-value {{
                 font-size: 2em;
             }}
+            
+            /* 移动端同比环比卡片字体稍小 */
+            .change-card .stat-value {{
+                font-size: 1.8em;
+            }}
         }}
         
         /* 强制横屏时也保持单列 */
@@ -412,7 +423,7 @@ def generate_html_report():
             <div class="stat-card">
                 <div class="stat-label"><i class="fas fa-users"></i> 最新日客流</div>
                 <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else '万'}</div>
-                <div class="stat-label">万人次</div>
+                <div class="stat-label">人次</div>
             </div>
             
             <div class="stat-card green-purple">
@@ -424,16 +435,16 @@ def generate_html_report():
             <div class="stat-card orange">
                 <div class="stat-label"><i class="fas fa-chart-line"></i> 7日平均</div>
                 <div class="stat-value">{avg_total:.2f}万</div>
-                <div class="stat-label">万人次</div>
+                <div class="stat-label">人次</div>
             </div>
             
-            <div class="stat-card {day_color}">
+            <div class="stat-card {day_color} change-card">
                 <div class="stat-label"><i class="fas fa-exchange-alt"></i> 日环比</div>
                 <div class="stat-value">{format_change_with_amount(day_change_pct, day_change_amount)}</div>
                 <div class="stat-label">与昨日相比</div>
             </div>
             
-            <div class="stat-card {week_color}">
+            <div class="stat-card {week_color} change-card">
                 <div class="stat-label"><i class="fas fa-calendar-week"></i> 周同比</div>
                 <div class="stat-value">{format_change_with_amount(week_change_pct, week_change_amount)}</div>
                 <div class="stat-label">与上周同期相比</div>
