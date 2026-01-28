@@ -149,6 +149,10 @@ def generate_html_report():
     def format_change_with_amount(pct_value, amount_value):
         return f"{format_change_pct(pct_value)}<br>{format_change_amount(amount_value)}"
     
+    # 格式化运营线路显示，分行显示
+    def format_line_info(line_count, station_count):
+        return f"{line_count}条<br>{station_count}站"
+    
     # HTML模板
     html_template = f"""
 <!DOCTYPE html>
@@ -249,8 +253,9 @@ def generate_html_report():
             text-overflow: ellipsis;
         }}
         
-        /* 同比环比卡片允许换行 */
-        .change-card .stat-value {{
+        /* 同比环比卡片和线路卡片允许换行 */
+        .change-card .stat-value,
+        .line-card .stat-value {{
             white-space: normal;
             line-height: 1.3;
         }}
@@ -396,8 +401,9 @@ def generate_html_report():
                 font-size: 2em;
             }}
             
-            /* 移动端同比环比卡片字体稍小 */
-            .change-card .stat-value {{
+            /* 移动端同比环比卡片和线路卡片字体稍小 */
+            .change-card .stat-value,
+            .line-card .stat-value {{
                 font-size: 1.8em;
             }}
         }}
@@ -450,9 +456,9 @@ def generate_html_report():
                 <div class="stat-label">与上周同期相比</div>
             </div>
             
-            <div class="stat-card dark-blue">
+            <div class="stat-card dark-blue line-card">
                 <div class="stat-label"><i class="fas fa-subway"></i> 运营线路</div>
-                <div class="stat-value">{quantity}条 ({total_stations}站)</div>
+                <div class="stat-value">{format_line_info(quantity, total_stations)}</div>
                 <div class="stat-label">市区线+郊区线</div>
             </div>
         </div>
