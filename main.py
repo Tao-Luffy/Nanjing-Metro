@@ -135,7 +135,7 @@ class NanjingSubwayVisualizer:
                 actual_passengers.append(actual)
             
             colors = [self.line_colors.get(line, '#CCCCCC') for line in lines]
-            fig, ax = plt.subplots(figsize=(9, 11))
+            fig, ax = plt.subplots(figsize=(9, 12))
             
             wedges, texts = ax.pie(
                 values,
@@ -157,7 +157,7 @@ class NanjingSubwayVisualizer:
             # 调整图例位置，使用ncol=2设置两列
             ax.legend(wedges, legend_labels,
                      loc='upper center',
-                     bbox_to_anchor=(0, -0.18, 1, 0.2),
+                     bbox_to_anchor=(0, -0.2, 1, 0.2),
                      ncol=2,  # 两列
                      fontsize=20)
             
