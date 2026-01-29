@@ -145,16 +145,20 @@ class NanjingSubwayVisualizer:
                 labels=None
             )
             
+            # 修改图例文本格式，去掉换行，合并为一行
             legend_labels = []
             for line, value, actual in zip(lines, values, actual_passengers):
                 if line.startswith("其他"):
-                    legend_labels.append(f"{line}: {value:.1f}%\n({actual:.1f}万)")
+                    legend_labels.append(f"{line}: {value:.1f}% ({actual:.1f}万)")
                 else:
-                    legend_labels.append(f"{line}: {value:.1f}%\n({actual:.1f}万)")
+                    legend_labels.append(f"{line}: {value:.1f}% ({actual:.1f}万)")
             
+            # 将图例放在图表下方，两列
+            # 调整图例位置，使用ncol=2设置两列
             ax.legend(wedges, legend_labels,
-                     loc="center left",
-                     bbox_to_anchor=(1, 0, 0.5, 1),
+                     loc='upper center',
+                     bbox_to_anchor=(0, -0.15, 1, 0.2),
+                     ncol=2,  # 两列
                      fontsize=20)
             
             center_text = f"{latest_date}\n总客流\n{total_passenger:.1f}万"
