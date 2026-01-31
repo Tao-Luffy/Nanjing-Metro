@@ -257,7 +257,7 @@ class NanjingSubwayVisualizer:
             line_info = self.data_collector.line_info
             
             # 增大图表高度，为底部图例留出空间
-            fig, ax = plt.subplots(figsize=(14, 16))
+            fig, ax = plt.subplots(figsize=(14, 18))
             
             # 存储图例信息
             legend_handles = []
@@ -353,7 +353,7 @@ class NanjingSubwayVisualizer:
             total_passengers = np.where(total_passengers == 0, 1, total_passengers)
             
             # 增大图表高度，为底部图例留出空间
-            fig, ax = plt.subplots(figsize=(14, 16))
+            fig, ax = plt.subplots(figsize=(14, 17))
             
             # 存储图例信息
             legend_handles = []
