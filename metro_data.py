@@ -42,47 +42,7 @@ class NanjingSubwayDataCollector:
                 print(f"读取 Cookie 文件失败: {e}")
         return None
 
-    def load_config(self, config_file: str) -> Dict:
-        """加载配置文件"""
-        try:
-            with open(config_file, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            print(f"配置文件 {config_file} 未找到，使用默认配置")
-            return self.get_default_config()
-        except json.JSONDecodeError as e:
-            print(f"配置文件解析错误: {e}")
-            return self.get_default_config()
-    
-    def get_default_config(self) -> Dict:
-        """获取默认配置"""
-        return {
-            "lines": [
-                {"name": "1号线", "color": "#FF0000"},
-                {"name": "2号线", "color": "#FFA500"},
-                {"name": "3号线", "color": "#9ACD32"},
-                {"name": "4号线", "color": "#1E90FF"},
-                {"name": "5号线", "color": "#800080"},
-                {"name": "7号线", "color": "#FF1493"},
-                {"name": "10号线", "color": "#00CED1"},
-                {"name": "S1号线", "color": "#32CD32"},
-                {"name": "S3号线", "color": "#FF4500"},
-                {"name": "S6号线", "color": "#DC143C"},
-                {"name": "S7号线", "color": "#8A2BE2"},
-                {"name": "S8号线", "color": "#FF8C00"},
-                {"name": "S9号线", "color": "#00BFFF"}
-            ],
-            "data_source": {
-                "weibo_user_id": "2638276292",
-                "search_keyword": "昨日客流",
-                "max_pages": 10
-            },
-            "visualization": {
-                "default_days": 7,
-                "color_scheme": "Set3"
-            }
-        }
-    
+
     def search_weibo(self, page: int) -> dict:
         """
         搜索微博数据
