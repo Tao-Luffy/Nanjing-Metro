@@ -199,16 +199,24 @@ class NanjingSubwayVisualizer:
             fig, ax = plt.subplots(figsize=(14, 8))
             
             if 'total' in df.columns:
+                # 先绘制填充区域（蓝色渐变阴影）
+                ax.fill_between(df['date'], df['total'], 
+                               alpha=0.3,  # 透明度
+                               color='#1f77b4',
+                               edgecolor='none',
+                               interpolate=True)
+                
+                # 然后绘制折线
                 ax.plot(df['date'], df['total'], 
                        color='#1f77b4',
                        marker='o',
                        linewidth=2.5,
                        markersize=8)
             
-            ax.set_xlabel('日期', fontsize=20, fontweight='bold')
-            ax.set_ylabel('总客流量（万）', fontsize=20, fontweight='bold')
+            ax.set_xlabel('日期', fontsize=25, fontweight='bold')
+            ax.set_ylabel('总客流量（万）', fontsize=25, fontweight='bold')
             
-            ax.legend(['总客流量'], loc='lower right', fontsize=20, title=None)
+            ax.legend(['总客流量'], loc='lower right', fontsize=25, title=None)
             ax.grid(True, alpha=0.3, linestyle='--')
             
             plt.xticks(rotation=45, ha='right', fontsize=12)
@@ -275,8 +283,8 @@ class NanjingSubwayVisualizer:
                     legend_handles.append(line_plot[0])
                     legend_labels.append(f'{line} ({stations}站)')
             
-            ax.set_xlabel('日期', fontsize=20, fontweight='bold')
-            ax.set_ylabel('站点客流强度（万/站）', fontsize=20, fontweight='bold')
+            ax.set_xlabel('日期', fontsize=25, fontweight='bold')
+            ax.set_ylabel('站点客流强度（万/站）', fontsize=25, fontweight='bold')
             
             ax.grid(True, alpha=0.3, linestyle='--')
             
@@ -285,21 +293,20 @@ class NanjingSubwayVisualizer:
             
             ax.set_ylim(bottom=0)
 
-            # 将图例放在图表下方，横向排列
-            # 调整图例位置：bbox_to_anchor=(0, -0.36, 1, 0.2) 表示：
-            # 左对齐(0)，在图表下方(-0.36)，宽度占满(1)，高度为0.2
+            # 将图例放在图表下方，改为3列
+            # 调整图例位置，降低图例位置避免盖住图表
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
-                     bbox_to_anchor=(0, -0.36, 1, 0.2),
-                     ncol=min(4, len(legend_labels)),  # 最多4列，根据线路数量调整
+                     bbox_to_anchor=(0, -0.4, 1, 0.2),  # 降低图例位置
+                     ncol=3,  # 改为3列
                      mode="expand",
                      borderaxespad=0,
-                     fontsize=20,
+                     fontsize=25,  # 字体增大到25
                      frameon=True,
                      fancybox=True)
             
             # 调整布局，为底部图例留出更多空间
-            plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出20%的空间
+            plt.tight_layout(rect=[0, 0.25, 1, 0.95])  # 增加底部空间
             
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/最近{n_days}天站点客流强度变化趋势图.png', 
@@ -369,8 +376,8 @@ class NanjingSubwayVisualizer:
                     legend_handles.append(line_plot[0])
                     legend_labels.append(line)
             
-            ax.set_xlabel('日期', fontsize=20, fontweight='bold')
-            ax.set_ylabel('线路客流量占比（%）', fontsize=20, fontweight='bold')
+            ax.set_xlabel('日期', fontsize=25, fontweight='bold')
+            ax.set_ylabel('线路客流量占比（%）', fontsize=25, fontweight='bold')
             
             ax.grid(True, alpha=0.3, linestyle='--')
             
@@ -380,20 +387,19 @@ class NanjingSubwayVisualizer:
             ax.set_ylim(bottom=0)
             
             # 将图例放在图表下方，横向排列
-            # 调整图例位置：bbox_to_anchor=(0, -0.36, 1, 0.2) 表示：
-            # 左对齐(0)，在图表下方(-0.36)，宽度占满(1)，高度为0.2
+            # 调整图例位置，降低图例位置避免盖住图表
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
-                     bbox_to_anchor=(0, -0.36, 1, 0.2),
+                     bbox_to_anchor=(0, -0.4, 1, 0.2),  # 降低图例位置
                      ncol=min(4, len(legend_labels)),  # 最多4列，根据线路数量调整
                      mode="expand",
                      borderaxespad=0,
-                     fontsize=20,
+                     fontsize=25,  # 字体增大到25
                      frameon=True,
                      fancybox=True)
             
             # 调整布局，为底部图例留出更多空间
-            plt.tight_layout(rect=[0, 0.2, 1, 0.95])  # 底部留出20%的空间
+            plt.tight_layout(rect=[0, 0.25, 1, 0.95])  # 增加底部空间
             
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/最近{n_days}天线路客流量占比变化趋势图.png', 
