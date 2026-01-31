@@ -257,7 +257,7 @@ class NanjingSubwayVisualizer:
             line_info = self.data_collector.line_info
             
             # 增大图表高度，为底部图例留出空间
-            fig, ax = plt.subplots(figsize=(14, 14))
+            fig, ax = plt.subplots(figsize=(14, 16))
             
             # 存储图例信息
             legend_handles = []
@@ -297,7 +297,7 @@ class NanjingSubwayVisualizer:
             # 调整图例位置，降低图例位置避免盖住图表
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
-                     bbox_to_anchor=(0, -0.4, 1, 0.2),  # 降低图例位置
+                     bbox_to_anchor=(0, -0.45, 1, 0.2),  # 降低图例位置
                      ncol=3,  # 改为3列
                      mode="expand",
                      borderaxespad=0,
@@ -353,7 +353,7 @@ class NanjingSubwayVisualizer:
             total_passengers = np.where(total_passengers == 0, 1, total_passengers)
             
             # 增大图表高度，为底部图例留出空间
-            fig, ax = plt.subplots(figsize=(14, 14))
+            fig, ax = plt.subplots(figsize=(14, 16))
             
             # 存储图例信息
             legend_handles = []
@@ -390,7 +390,7 @@ class NanjingSubwayVisualizer:
             # 调整图例位置，降低图例位置避免盖住图表
             ax.legend(legend_handles, legend_labels,
                      loc='upper center',
-                     bbox_to_anchor=(0, -0.4, 1, 0.2),  # 降低图例位置
+                     bbox_to_anchor=(0, -0.45, 1, 0.2),  # 降低图例位置
                      ncol=min(4, len(legend_labels)),  # 最多4列，根据线路数量调整
                      mode="expand",
                      borderaxespad=0,
