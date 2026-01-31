@@ -43,6 +43,16 @@ class NanjingSubwayDataCollector:
         return None
 
 
+    def load_config(self, config_file: str) -> Dict:
+        """加载配置文件"""
+        try:
+            with open(config_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print(f"配置文件 {config_file} 未找到")
+        except json.JSONDecodeError as e:
+            print(f"配置文件解析错误: {e}")
+
     def search_weibo(self, page: int) -> dict:
         """
         搜索微博数据
