@@ -213,10 +213,10 @@ class NanjingSubwayVisualizer:
                        linewidth=2.5,
                        markersize=8)
             
-            ax.set_xlabel('日期', fontsize=28, fontweight='bold')
-            ax.set_ylabel('总客流量（万）', fontsize=28, fontweight='bold')
+            ax.set_xlabel('日期', fontsize=30, fontweight='bold')
+            ax.set_ylabel('总客流量（万）', fontsize=30, fontweight='bold')
             
-            ax.legend(['总客流量'], loc='lower right', fontsize=28, title=None)
+            ax.legend(['总客流量'], loc='lower right', fontsize=30, title=None)
             ax.grid(True, alpha=0.3, linestyle='--')
             
             plt.xticks(rotation=45, ha='right', fontsize=12)
@@ -283,8 +283,8 @@ class NanjingSubwayVisualizer:
                     legend_handles.append(line_plot[0])
                     legend_labels.append(f'{line} ({stations}站)')
             
-            ax.set_xlabel('日期', fontsize=28, fontweight='bold')
-            ax.set_ylabel('站点客流强度（万/站）', fontsize=28, fontweight='bold')
+            ax.set_xlabel('日期', fontsize=30, fontweight='bold')
+            ax.set_ylabel('站点客流强度（万/站）', fontsize=30, fontweight='bold')
             
             ax.grid(True, alpha=0.3, linestyle='--')
             
@@ -301,7 +301,7 @@ class NanjingSubwayVisualizer:
                      ncol=3,  # 改为3列
                      mode="expand",
                      borderaxespad=0,
-                     fontsize=28,
+                     fontsize=30,
                      frameon=True,
                      fancybox=True)
             
@@ -376,8 +376,8 @@ class NanjingSubwayVisualizer:
                     legend_handles.append(line_plot[0])
                     legend_labels.append(line)
             
-            ax.set_xlabel('日期', fontsize=28, fontweight='bold')
-            ax.set_ylabel('线路客流量占比（%）', fontsize=28, fontweight='bold')
+            ax.set_xlabel('日期', fontsize=30, fontweight='bold')
+            ax.set_ylabel('线路客流量占比（%）', fontsize=30, fontweight='bold')
             
             ax.grid(True, alpha=0.3, linestyle='--')
             
@@ -394,7 +394,7 @@ class NanjingSubwayVisualizer:
                      ncol=min(4, len(legend_labels)),  # 最多4列，根据线路数量调整
                      mode="expand",
                      borderaxespad=0,
-                     fontsize=28,
+                     fontsize=30,
                      frameon=True,
                      fancybox=True)
             
