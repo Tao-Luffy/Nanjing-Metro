@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.edge.options import Options
 import json
 import time
-
+import os
 
 class WeiboLogin:
     def __init__(self):
@@ -12,10 +12,15 @@ class WeiboLogin:
         """初始化 Edge 浏览器"""
         try:
             edge_options = Options()
-            edge_options.add_argument('--start-maximized')  # 最大化窗口
-            edge_options.add_argument('--disable-blink-features=AutomationControlled')
-            edge_options.add_experimental_option('excludeSwitches', ['enable-automation'])
-            edge_options.add_experimental_option('useAutomationExtension', False)
+            edge_options.add_argument('--start-maximized')
+
+            # 固定用户数据目录：首次登录后会被复用
+            profile_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "edge_profile_weibo"))
+            edge_options.add_argument(rf'--user-data-dir={profile_dir}')
+
+            # 可选稳定性参数
+            edge_options.add_argument('--no-first-run')
+            edge_options.add_argument('--no-default-browser-check')
 
             print("正在启动 Edge 浏览器...")
             self.driver = webdriver.Edge(options=edge_options)
@@ -27,7 +32,6 @@ class WeiboLogin:
 
             print("✓ 浏览器启动成功！\n")
             return True
-
         except Exception as e:
             print(f"❌ 启动浏览器失败: {e}")
             return False
@@ -47,6 +51,13 @@ class WeiboLogin:
         # 打开微博登录页面
         self.driver.get('https://weibo.com')
         time.sleep(2)
+        self.driver.get('https://weibo.com')
+        time.sleep(2)
+
+        # 已登录就直接跳过
+        if 'login' not in self.driver.current_url.lower():
+            print("\n✓ 已检测到登录态，跳过手动登录\n")
+            return True
 
         # 等待用户手动登录
         input("完成登录后按 Enter 键继续...")
@@ -163,14 +174,13 @@ def main():
             print("  • weibo_cookies.txt  (字符串格式)")
             print("\n可以在其他程序中使用这些 Cookie 文件\n")
 
-        input("按 Enter 键关闭浏览器...")
+        # input("按 Enter 键关闭浏览器...")
 
     except KeyboardInterrupt:
         print("\n\n⚠️  用户中断程序")
     except Exception as e:
         print(f"\n❌ 程序异常: {e}")
     finally:
-        #关闭窗口
         weibo.close()
 
 
