@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 import pandas as pd
 import send_email as sm
+import get_cookie
 
 
 class NanjingSubwayDataCollector:
@@ -198,6 +199,10 @@ class NanjingSubwayDataCollector:
                 if not error_notified:
                     sm.send_email()
                     error_notified = True
+                    #  try:
+                    #     get_cookie.main()
+                    # except:
+                    #     print('❌cookie自动更新失败')
                 continue
 
 
