@@ -199,10 +199,10 @@ class NanjingSubwayDataCollector:
                 if not error_notified:
                     sm.send_email()
                     error_notified = True
-                    #  try:
-                    #     get_cookie.main()
-                    # except:
-                    #     print('❌cookie自动更新失败')
+                     try:
+                        get_cookie.main()
+                    except:
+                        print('❌cookie自动更新失败')
                 continue
 
 
