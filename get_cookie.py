@@ -182,6 +182,8 @@ def main():
         print(f"\n❌ 程序异常: {e}")
     finally:
         weibo.close()
+#测试更新
+
 
 
 if __name__ == '__main__':
