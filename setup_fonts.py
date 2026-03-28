@@ -23,12 +23,14 @@ def setup_chinese_fonts():
     system_fonts = []
     
     # Linux 字体路径
+    ''''''
     linux_font_paths = [
         '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',  # 文泉驿正黑
         '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc',  # 文泉驿微黑
         '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',  # DejaVu
         '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
     ]
+    
     
     # 检查字体文件是否存在
     for font_path in linux_font_paths:
