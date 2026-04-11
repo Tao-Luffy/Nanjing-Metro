@@ -142,7 +142,7 @@ class WeiboLogin:
         if self.driver:
             print("Closing browser...")
             self.driver.quit()
-            print("✓ Browser closed\n")
+            print("Browser closed\n")
 
 
 def main():
