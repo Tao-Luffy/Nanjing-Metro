@@ -33,7 +33,11 @@ jobs:
       run: |
         mkdir -p docs/images
         mkdir -p docs/data
-        
+
+    - name: Generate HTML report
+      run: |
+        python get_cookie.py
+
     - name: Run analysis
       run: python main.py
       env:
