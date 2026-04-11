@@ -3,7 +3,7 @@
 
 import os
 
-# 然后导入其他库
+# Then import other libraries
 import matplotlib
 
 matplotlib.use('Agg')
@@ -14,7 +14,7 @@ import logging
 from datetime import datetime
 import json
 
-# 配置日志
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -26,24 +26,23 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# 确保中文字体设置
+# Ensure Chinese font settings (kept for compatibility, but not used in output)
 
-
-# 设置图表样式
+# Set chart style
 plt.rcParams['figure.dpi'] = 100
 plt.rcParams['savefig.dpi'] = 300
 plt.rcParams['figure.figsize'] = (14, 8)
 
 
 class NanjingSubwayVisualizer:
-    """南京地铁数据可视化器"""
+    """Nanjing Metro Data Visualizer"""
 
     def __init__(self, data_collector):
         self.data_collector = data_collector
         self.line_colors = self._get_line_colors()
 
     def _get_line_colors(self):
-        """获取线路颜色"""
+        """Get line colors"""
         colors = {}
         line_colors_config = self.data_collector.get_line_colors()
 
@@ -60,7 +59,7 @@ class NanjingSubwayVisualizer:
         return colors
 
     def _ensure_font(self):
-        """确保字体设置正确"""
+        """Ensure font settings are correct"""
         try:
             if not plt.rcParams['font.sans-serif']:
                 plt.rcParams['font.sans-serif'] = ['WenQuanYi Zen Hei', 'DejaVu Sans', 'sans-serif']
@@ -69,7 +68,7 @@ class NanjingSubwayVisualizer:
             pass
 
     def plot_compact_pie_chart(self):
-        """占比饼图"""
+        """Proportion pie chart"""
         try:
             self._ensure_font()
 
@@ -77,10 +76,10 @@ class NanjingSubwayVisualizer:
             latest_date = self.data_collector.get_latest_date()
 
             latest_data = self.data_collector.get_latest_data()
-            total_passenger = latest_data['passenger_data'].get('总客流量', 0)
+            total_passenger = latest_data['passenger_data'].get('total_passengers', 0)
 
             if not proportions:
-                logger.warning("没有找到最新数据")
+                logger.warning("No latest data found")
                 return None
 
             sorted_items = sorted(proportions.items(), key=lambda x: x[1], reverse=True)
@@ -104,23 +103,22 @@ class NanjingSubwayVisualizer:
                 labels=None
             )
 
-            # 修改图例文本格式，去掉换行，合并为一行
+            # Modify legend text format: remove line breaks, combine into one line
             legend_labels = []
             for line, value, actual in zip(lines, values, actual_passengers):
-                if line.startswith("其他"):
-                    legend_labels.append(f"{line}: {value:.1f}% ({actual:.1f}万)")
+                if line.startswith("Other"):
+                    legend_labels.append(f"{line}: {value:.1f}% ({actual:.1f} ten thousand)")
                 else:
-                    legend_labels.append(f"{line}: {value:.1f}% ({actual:.1f}万)")
+                    legend_labels.append(f"{line}: {value:.1f}% ({actual:.1f} ten thousand)")
 
-            # 将图例放在图表下方，两列
-            # 调整图例位置，使用ncol=2设置两列
+            # Place legend below chart, two columns
             ax.legend(wedges, legend_labels,
                       loc='upper center',
                       bbox_to_anchor=(0, -0.2, 1, 0.2),
-                      ncol=2,  # 两列
+                      ncol=2,  # Two columns
                       fontsize=20)
 
-            center_text = f"{latest_date}\n总客流\n{total_passenger:.1f}万"
+            center_text = f"{latest_date}\nTotal Passengers\n{total_passenger:.1f} ten thousand"
             ax.text(0, 0, center_text,
                     ha='center', va='center',
                     fontsize=28, fontweight='bold',
@@ -130,52 +128,52 @@ class NanjingSubwayVisualizer:
             plt.tight_layout()
 
             os.makedirs('docs/images', exist_ok=True)
-            fig.savefig('docs/images/昨日客流线路占比图.png', dpi=300, bbox_inches='tight')
+            fig.savefig('docs/images/yesterday_passenger_line_proportion.png', dpi=300, bbox_inches='tight')
             plt.close(fig)
 
-            logger.info("占比饼图已生成")
+            logger.info("Proportion pie chart generated")
             return fig
 
         except Exception as e:
-            logger.error(f"生成占比饼图时出错: {e}", exc_info=True)
+            logger.error(f"Error generating proportion pie chart: {e}", exc_info=True)
             return None
 
     def plot_total_passenger_trend(self, n_days=60):
-        """绘制总客流量变化趋势图"""
+        """Plot total passenger trend chart"""
         try:
             self._ensure_font()
 
-            # 获取原始数据（微博是倒序的，最新的在前）
+            # Get raw data (Weibo data is reversed, latest first)
             df = self.data_collector.get_last_n_days_line_data(n_days)
 
             if df.empty:
-                logger.warning(f"没有找到最近{n_days}天的数据")
+                logger.warning(f"No data found for the last {n_days} days")
                 return None
 
-            # 微博数据是倒序的，我们需要反转数据以得到正确的时间顺序
+            # Reverse data to correct chronological order
             df = df.iloc[::-1].reset_index(drop=True)
 
             fig, ax = plt.subplots(figsize=(14, 8))
 
             if 'total' in df.columns:
-                # 先绘制填充区域（蓝色渐变阴影）
+                # Draw filled area (blue gradient shadow) first
                 ax.fill_between(df['date'], df['total'],
-                                alpha=0.3,  # 透明度
+                                alpha=0.3,
                                 color='#1f77b4',
                                 edgecolor='none',
                                 interpolate=True)
 
-                # 然后绘制折线
+                # Then draw the line
                 ax.plot(df['date'], df['total'],
                         color='#1f77b4',
                         marker='o',
                         linewidth=2.5,
                         markersize=8)
 
-            ax.set_xlabel('日期', fontsize=30, fontweight='bold')
-            ax.set_ylabel('总客流量（万）', fontsize=30, fontweight='bold')
+            ax.set_xlabel('Date', fontsize=30, fontweight='bold')
+            ax.set_ylabel('Total Passengers (ten thousand)', fontsize=30, fontweight='bold')
 
-            ax.legend(['总客流量'], loc='lower right', fontsize=30, title=None)
+            ax.legend(['Total Passengers'], loc='lower right', fontsize=30, title=None)
             ax.grid(True, alpha=0.3, linestyle='--')
 
             plt.xticks(rotation=45, ha='right', fontsize=12)
@@ -186,39 +184,39 @@ class NanjingSubwayVisualizer:
             plt.tight_layout()
 
             os.makedirs('docs/images', exist_ok=True)
-            fig.savefig(f'docs/images/最近{n_days}天总客流量变化趋势图.png',
+            fig.savefig(f'docs/images/last_{n_days}_days_total_passenger_trend.png',
                         dpi=300, bbox_inches='tight')
             plt.close(fig)
 
-            logger.info(f"最近{n_days}天总客流量变化趋势图已生成")
+            logger.info(f"Last {n_days} days total passenger trend chart generated")
 
             return fig
 
         except Exception as e:
-            logger.error(f"生成总客流量变化趋势图时出错: {e}", exc_info=True)
+            logger.error(f"Error generating total passenger trend chart: {e}", exc_info=True)
             return None
 
     def plot_last_n_days_line_trend(self, n_days=30):
-        """绘制站点客流强度变化趋势图"""
+        """Plot station passenger intensity trend chart"""
         try:
             self._ensure_font()
 
-            # 获取原始数据（微博是倒序的，最新的在前）
+            # Get raw data (Weibo data is reversed, latest first)
             df = self.data_collector.get_last_n_days_line_data(n_days)
 
             if df.empty:
-                logger.warning(f"没有找到最近{n_days}天的数据")
+                logger.warning(f"No data found for the last {n_days} days")
                 return None
 
-            # 微博数据是倒序的，我们需要反转数据以得到正确的时间顺序
+            # Reverse data to correct chronological order
             df = df.iloc[::-1].reset_index(drop=True)
 
             line_info = self.data_collector.line_info
 
-            # 增大图表高度，为底部图例留出空间
+            # Increase chart height to leave space for legend at bottom
             fig, ax = plt.subplots(figsize=(14, 21))
 
-            # 存储图例信息
+            # Store legend information
             legend_handles = []
             legend_labels = []
 
@@ -238,12 +236,12 @@ class NanjingSubwayVisualizer:
                                         linewidth=2.5,
                                         markersize=8)
 
-                    # 保存图例句柄和标签
+                    # Save legend handles and labels
                     legend_handles.append(line_plot[0])
-                    legend_labels.append(f'{line} ({stations}站)')
+                    legend_labels.append(f'{line} ({stations} stations)')
 
-            ax.set_xlabel('日期', fontsize=30, fontweight='bold')
-            ax.set_ylabel('站点客流强度（万/站）', fontsize=30, fontweight='bold')
+            ax.set_xlabel('Date', fontsize=30, fontweight='bold')
+            ax.set_ylabel('Station Passenger Intensity (ten thousand/station)', fontsize=30, fontweight='bold')
 
             ax.grid(True, alpha=0.3, linestyle='--')
 
@@ -252,69 +250,68 @@ class NanjingSubwayVisualizer:
 
             ax.set_ylim(bottom=0)
 
-            # 将图例放在图表下方，改为3列
-            # 调整图例位置，降低图例位置避免盖住图表
+            # Place legend below chart, three columns
             ax.legend(legend_handles, legend_labels,
                       loc='upper center',
-                      bbox_to_anchor=(0, -0.45, 1, 0.2),  # 降低图例位置
-                      ncol=3,  # 改为3列
+                      bbox_to_anchor=(0, -0.45, 1, 0.2),
+                      ncol=3,
                       mode="expand",
                       borderaxespad=0,
                       fontsize=30,
                       frameon=True,
                       fancybox=True)
 
-            # 调整布局，为底部图例留出更多空间
-            plt.tight_layout(rect=[0, 0.25, 1, 0.95])  # 增加底部空间
+            # Adjust layout to leave more space for bottom legend
+            plt.tight_layout(rect=[0, 0.25, 1, 0.95])
 
             os.makedirs('docs/images', exist_ok=True)
-            fig.savefig(f'docs/images/最近{n_days}天站点客流强度变化趋势图.png',
+            fig.savefig(f'docs/images/last_{n_days}_days_station_intensity_trend.png',
                         dpi=300, bbox_inches='tight')
             plt.close(fig)
 
-            logger.info(f"最近{n_days}天站点客流强度变化趋势图已生成")
+            logger.info(f"Last {n_days} days station passenger intensity trend chart generated")
 
             return fig
 
         except Exception as e:
-            logger.error(f"生成站点客流强度趋势图时出错: {e}", exc_info=True)
+            logger.error(f"Error generating station passenger intensity trend chart: {e}", exc_info=True)
             return None
 
     def plot_line_proportion_trend(self, n_days=30):
-        """绘制线路客流量占比变化趋势图"""
+        """Plot line passenger proportion trend chart"""
         try:
             self._ensure_font()
 
-            # 获取原始数据（微博是倒序的，最新的在前）
+            # Get raw data (Weibo data is reversed, latest first)
             df = self.data_collector.get_last_n_days_line_data(n_days)
 
             if df.empty:
-                logger.warning(f"没有找到最近{n_days}天的数据")
+                logger.warning(f"No data found for the last {n_days} days")
                 return None
 
-            # 微博数据是倒序的，我们需要反转数据以得到正确的时间顺序
+            # Reverse data to correct chronological order
             df = df.iloc[::-1].reset_index(drop=True)
 
-            # 获取所有线路列（排除'total'和'date'）
+            # Get all line columns (excluding 'total' and 'date')
             line_columns = [col for col in df.columns if col not in ['total', 'date']]
 
-            # 使用已知的线路列表，确保只计算有数据的线路
+            # Use known line list to ensure only valid line data is calculated
             valid_line_columns = [col for col in line_columns if col in self.data_collector.all_lines]
 
             if not valid_line_columns:
-                logger.warning("没有找到有效的线路数据")
+                logger.warning("No valid line data found")
                 return None
 
-            # 计算每日总客流量（所有线路之和）
+            # Calculate daily total passengers (sum of all lines)
             total_passengers = df[valid_line_columns].sum(axis=1).values
 
-            # 确保没有零值，避免除以零
+            # Avoid division by zero
             total_passengers = np.where(total_passengers == 0, 1, total_passengers)
 
-            # 增大图表高度，为底部图例留出空间
+            # Increase chart height to leave space for legend at bottom
             fig, ax = plt.subplots(figsize=(14, 19))
 
-            # 存储图例信息
+            # Store legend information
             legend_handles = []
             legend_labels = []
 
@@ -322,7 +319,7 @@ class NanjingSubwayVisualizer:
                 if line in df.columns and df[line].notna().any():
                     color = self.line_colors.get(line, '#CCCCCC')
 
-                    # 计算每日占比
+                    # Calculate daily proportion
                     proportions = (df[line].values / total_passengers) * 100
 
                     line_plot = ax.plot(df['date'], proportions,
@@ -331,12 +328,12 @@ class NanjingSubwayVisualizer:
                                         linewidth=2.5,
                                         markersize=8)
 
-                    # 保存图例句柄和标签
+                    # Save legend handles and labels
                     legend_handles.append(line_plot[0])
                     legend_labels.append(line)
 
-            ax.set_xlabel('日期', fontsize=30, fontweight='bold')
-            ax.set_ylabel('线路客流量占比（%）', fontsize=30, fontweight='bold')
+            ax.set_xlabel('Date', fontsize=30, fontweight='bold')
+            ax.set_ylabel('Line Passenger Proportion (%)', fontsize=30, fontweight='bold')
 
             ax.grid(True, alpha=0.3, linestyle='--')
 
@@ -345,85 +342,84 @@ class NanjingSubwayVisualizer:
 
             ax.set_ylim(bottom=0)
 
-            # 将图例放在图表下方，横向排列
-            # 调整图例位置，降低图例位置避免盖住图表
+            # Place legend below chart, horizontal arrangement
             ax.legend(legend_handles, legend_labels,
                       loc='upper center',
-                      bbox_to_anchor=(0, -0.45, 1, 0.2),  # 降低图例位置
-                      ncol=min(4, len(legend_labels)),  # 最多4列，根据线路数量调整
+                      bbox_to_anchor=(0, -0.45, 1, 0.2),
+                      ncol=min(4, len(legend_labels)),  # At most 4 columns, adjust by line count
                       mode="expand",
                       borderaxespad=0,
                       fontsize=30,
                       frameon=True,
                       fancybox=True)
 
-            # 调整布局，为底部图例留出更多空间
-            plt.tight_layout(rect=[0, 0.25, 1, 0.95])  # 增加底部空间
+            # Adjust layout to leave more space for bottom legend
+            plt.tight_layout(rect=[0, 0.25, 1, 0.95])
 
             os.makedirs('docs/images', exist_ok=True)
-            fig.savefig(f'docs/images/最近{n_days}天线路客流量占比变化趋势图.png',
+            fig.savefig(f'docs/images/last_{n_days}_days_line_proportion_trend.png',
                         dpi=300, bbox_inches='tight')
             plt.close(fig)
 
-            logger.info(f"最近{n_days}天线路客流量占比变化趋势图已生成")
+            logger.info(f"Last {n_days} days line passenger proportion trend chart generated")
 
             return fig
 
         except Exception as e:
-            logger.error(f"生成线路客流量占比变化趋势图时出错: {e}", exc_info=True)
+            logger.error(f"Error generating line passenger proportion trend chart: {e}", exc_info=True)
             return None
 
 
 def main():
-    """主函数"""
-    logger.info("开始收集南京地铁客流数据...")
+    """Main function"""
+    logger.info("Starting Nanjing Metro passenger data collection...")
 
     try:
         collector = NanjingSubwayDataCollector("config.json")
         passenger_records = collector.collect_data()
 
-        logger.info(f"共收集到 {len(passenger_records)} 条客流记录")
+        logger.info(f"Collected {len(passenger_records)} passenger records")
 
         if passenger_records:
             latest_date = collector.get_latest_date()
             latest_data = collector.get_latest_data()
-            total = latest_data['passenger_data'].get('总客流量', 0)
+            total = latest_data['passenger_data'].get('total_passengers', 0)
 
-            logger.info(f"最新数据: {latest_date}")
-            logger.info(f"总客流量: {total:.1f}万")
+            logger.info(f"Latest data: {latest_date}")
+            logger.info(f"Total passengers: {total:.1f} ten thousand")
 
-            logger.info("=== 线路配置信息 ===")
+            logger.info("=== Line Configuration Information ===")
             for line in collector.all_lines:
                 info = collector.get_line_info(line)
                 stations = info.get('stations', 'N/A')
-                logger.info(f"{line}: {stations}站 - {info.get('description', '')}")
+                logger.info(f"{line}: {stations} stations - {info.get('description', '')}")
 
             visualizer = NanjingSubwayVisualizer(collector)
 
-            logger.info("1. 正在绘制线路占比饼图...")
+            logger.info("1. Generating line proportion pie chart...")
             fig1 = visualizer.plot_compact_pie_chart()
             if fig1:
-                logger.info("  线路占比饼图已保存")
+                logger.info("   Line proportion pie chart saved")
 
-            logger.info("2. 正在绘制总客流量变化趋势图...")
+            logger.info("2. Generating total passenger trend chart...")
             fig2 = visualizer.plot_total_passenger_trend()
             if fig2:
-                logger.info("  总客流量变化趋势图已保存")
+                logger.info("   Total passenger trend chart saved")
 
-            logger.info("3. 正在绘制站点客流强度变化趋势图...")
+            logger.info("3. Generating station passenger intensity trend chart...")
             fig3 = visualizer.plot_last_n_days_line_trend()
             if fig3:
-                logger.info("  站点客流强度变化趋势图已保存")
+                logger.info("   Station passenger intensity trend chart saved")
 
-            logger.info("4. 正在绘制线路客流量占比变化趋势图...")
+            logger.info("4. Generating line passenger proportion trend chart...")
             fig4 = visualizer.plot_line_proportion_trend()
             if fig4:
-                logger.info("  线路客流量占比变化趋势图已保存")
+                logger.info("   Line passenger proportion trend chart saved")
 
             os.makedirs('docs/data', exist_ok=True)
             df = collector.get_last_n_days_line_data()
             if not df.empty:
-                df.to_csv('docs/data/最近客流数据.csv', index=False, encoding='utf-8-sig')
+                df.to_csv('docs/data/recent_passenger_data.csv', index=False, encoding='utf-8-sig')
 
                 json_data = {
                     'latest_date': latest_date,
@@ -444,32 +440,34 @@ def main():
                 with open('docs/data/latest_data.json', 'w', encoding='utf-8') as f:
                     json.dump(json_data, f, ensure_ascii=False, indent=2)
 
-                logger.info("数据已保存为CSV和JSON格式")
+                logger.info("Data saved in CSV and JSON formats")
 
-            logger.info("分析完成！")
+            logger.info("Analysis completed!")
 
             print("\n" + "=" * 60)
-            print("✅ 南京地铁客流分析完成！")
+            print("Nanjing Metro Passenger Analysis Completed!")
             print("=" * 60)
-            print(f"📅 最新数据日期: {latest_date}")
-            print(f"👥 总客流量: {total:.1f}万")
-            print(f"📊 生成图表数: 4张")
-            print(f"📈 图表类型: 线路占比饼图、总客流量变化趋势图、站点客流强度变化趋势图、线路客流量占比变化趋势图")
-            print(f"💾 数据文件: 最近客流数据.csv")
-            print(f"💾 JSON文件: latest_data.json")
+            print(f"Latest data date: {latest_date}")
+            print(f"Total passengers: {total:.1f} ten thousand")
+            print(f"Charts generated: 4")
+            print(
+                f"Chart types: Line proportion pie chart, total passenger trend, station intensity trend, line proportion trend")
+            print(f"Data file: recent_passenger_data.csv")
+            print(f"JSON file: latest_data.json")
             print("=" * 60)
-            print(f"🌐 报告地址: 部署后访问 https://Unqualified-Developers.github.io/Nanjing-Metro/")
+            print(f"Report URL: After deployment visit https://Unqualified-Developers.github.io/Nanjing-Metro/")
             print("=" * 60)
 
         else:
-            logger.warning("没有收集到数据")
-            print("❌ 没有收集到数据，请检查数据源或网络连接")
+            logger.warning("No data collected")
+            print("No data collected. Please check data source or network connection.")
 
     except Exception as e:
-        logger.error(f"运行过程中发生错误: {e}", exc_info=True)
-        print(f"❌ 运行出错: {e}")
+        logger.error(f"Error occurred during execution: {e}", exc_info=True)
+        print(f"Execution error: {e}")
         raise
 
 
 if __name__ == "__main__":
     main()
+   
