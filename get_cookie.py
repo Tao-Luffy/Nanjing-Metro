@@ -1,120 +1,121 @@
-from selenium import webdriver
+﻿from selenium import webdriver
 from selenium.webdriver.edge.options import Options
 import json
 import time
 import os
+
 
 class WeiboLogin:
     def __init__(self):
         self.driver = None
 
     def init_driver(self):
-        """初始化 Edge 浏览器"""
+        """Initialize Edge browser"""
         try:
             edge_options = Options()
             edge_options.add_argument('--start-maximized')
 
-            # 固定用户数据目录：首次登录后会被复用
+            # Fixed user data directory: will be reused after first login
             profile_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "edge_profile_weibo"))
             edge_options.add_argument(rf'--user-data-dir={profile_dir}')
 
-            # 可选稳定性参数
+            # Optional stability parameters
             edge_options.add_argument('--no-first-run')
             edge_options.add_argument('--no-default-browser-check')
 
-            print("正在启动 Edge 浏览器...")
+            print("Starting Edge browser...")
             self.driver = webdriver.Edge(options=edge_options)
 
-            # 隐藏 webdriver 特征
+            # Hide webdriver features
             self.driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
                 'source': 'Object.defineProperty(navigator, "webdriver", {get: () => undefined})'
             })
 
-            print("✓ 浏览器启动成功！\n")
+            print("✓ Browser started successfully!\n")
             return True
         except Exception as e:
-            print(f"❌ 启动浏览器失败: {e}")
+            print(f"Failed to start browser: {e}")
             return False
 
     def manual_login(self):
-        """手动登录微博"""
+        """Manually log in to Weibo"""
         print("=" * 60)
-        print("   请在浏览器中手动完成登录")
+        print("   Please log in manually in the browser")
         print("=" * 60)
-        print("\n操作步骤：")
-        print("1. 在打开的浏览器中输入账号密码")
-        print("2. 完成验证码或滑块验证（如有）")
-        print("3. 点击登录按钮")
-        print("4. 确认登录成功后，回到此窗口")
+        print("\nSteps:")
+        print("1. Enter your username and password in the opened browser")
+        print("2. Complete any CAPTCHA or slider verification (if required)")
+        print("3. Click the login button")
+        print("4. After confirming successful login, return to this window")
         print("=" * 60 + "\n")
 
-        # 打开微博登录页面
+        # Open Weibo login page
         self.driver.get('https://weibo.com')
         time.sleep(2)
         self.driver.get('https://weibo.com')
         time.sleep(2)
 
-        # 已登录就直接跳过
+        # Skip if already logged in
         if 'login' not in self.driver.current_url.lower():
-            print("\n✓ 已检测到登录态，跳过手动登录\n")
+            print("\n✓ Login state detected, skipping manual login\n")
             return True
 
-        # 等待用户手动登录
-        input("完成登录后按 Enter 键继续...")
+        # Wait for user to manually log in
+        input("Press Enter after completing login...")
 
-        # 验证是否登录成功
+        # Verify login success
         current_url = self.driver.current_url
         page_title = self.driver.title
 
         if 'login' not in current_url.lower() and 'weibo' in current_url:
-            print(f"\n✓ 登录成功！当前页面: {page_title}\n")
+            print(f"\n✓ Login successful! Current page: {page_title}\n")
             return True
         else:
-            print("\n⚠️  似乎还未登录成功")
-            retry = input("是否重试？(y/n): ")
+            print("\nLogin does not appear to be successful")
+            retry = input("Retry? (y/n): ")
             if retry.lower() == 'y':
                 return self.manual_login()
             return False
 
     def get_cookies(self):
-        """获取并保存 Cookies"""
+        """Retrieve and save Cookies"""
         try:
             print("=" * 60)
-            print("正在获取 Cookies...")
+            print("Retrieving Cookies...")
             print("=" * 60 + "\n")
 
-            # 获取所有 Cookie
+            # Get all Cookies
             cookies = self.driver.get_cookies()
 
             if not cookies:
-                print("❌ 未获取到 Cookie")
+                print("No Cookies retrieved")
                 return None
 
-            print(f"✓ 成功获取 {len(cookies)} 个 Cookie\n")
+            print(f"✓ Successfully retrieved {len(cookies)} Cookies\n")
 
-            # 显示 Cookie 列表
-            print("Cookie 列表：")
+            # Display Cookie list
+            print("Cookie list:")
             for i, cookie in enumerate(cookies, 1):
                 name = cookie.get('name', '')
-                value = cookie.get('value', '')[:50]  # 只显示前50个字符
+                value = cookie.get('value', '')[:50]  # Show only first 50 characters
                 print(f"  {i}. {name}: {value}...")
             print()
 
-            # 保存为 JSON 格式
+            # Save as JSON format
             with open('weibo_cookies.json', 'w', encoding='utf-8') as f:
                 json.dump(cookies, f, indent=2, ensure_ascii=False)
-            print("✓ Cookies 已保存到: weibo_cookies.json")
+            print("✓ Cookies saved to: weibo_cookies.json")
 
-            # 保存为字符串格式
+            # Save as string format
             cookie_list = [f"{c['name']}={c['value']}" for c in cookies]
             cookie_string = '; '.join(cookie_list)
 
             with open('weibo_cookies.txt', 'w', encoding='utf-8') as f:
                 f.write(cookie_string)
-            print("✓ Cookie 字符串已保存到: weibo_cookies.txt")
+            print("✓ Cookie string saved to: weibo_cookies.txt")
 
-            # 在浏览器中显示提示
-            js_code = f'alert("成功获取 {len(cookies)} 个 Cookie！\\n\\n已保存到本地文件")'
+            # Display prompt in browser
+            js_code = f'alert("Successfully retrieved {len(cookies)} Cookies!\\n\\nSaved to local files")'
             self.driver.execute_script(js_code)
             time.sleep(2)
 
@@ -123,9 +124,9 @@ class WeiboLogin:
             except:
                 pass
 
-            # 打印 Cookie 字符串预览
+            # Print Cookie string preview
             print("\n" + "=" * 60)
-            print("Cookie 字符串预览（前200字符）：")
+            print("Cookie string preview (first 200 characters):")
             print("=" * 60)
             print(cookie_string[:200] + "...")
             print("=" * 60 + "\n")
@@ -133,15 +134,15 @@ class WeiboLogin:
             return cookie_string
 
         except Exception as e:
-            print(f"❌ 获取 Cookies 失败: {e}")
+            print(f"Failed to retrieve Cookies: {e}")
             return None
 
     def close(self):
-        """关闭浏览器"""
+        """Close browser"""
         if self.driver:
-            print("正在关闭浏览器...")
+            print("Closing browser...")
             self.driver.quit()
-            print("✓ 浏览器已关闭\n")
+            print("✓ Browser closed\n")
 
 
 def main():
@@ -152,38 +153,39 @@ def main():
     weibo = WeiboLogin()
 
     try:
-        # 初始化浏览器
+        # Initialize browser
         if not weibo.init_driver():
-            print("初始化失败，程序退出")
+            print("Initialization failed, exiting program")
             return
 
-        # 手动登录
+        # Manual login
         if not weibo.manual_login():
-            print("\n登录失败，程序退出")
+            print("\nLogin failed, exiting program")
             return
 
-        # 获取 Cookies
+        # Retrieve Cookies
         cookies = weibo.get_cookies()
 
         if cookies:
             print("=" * 60)
-            print("   ✓ 所有操作完成！")
+            print("   ✓ All operations completed!")
             print("=" * 60)
-            print("\nCookie 文件保存位置：")
-            print("  • weibo_cookies.json (JSON格式)")
-            print("  • weibo_cookies.txt  (字符串格式)")
-            print("\n可以在其他程序中使用这些 Cookie 文件\n")
+            print("\nCookie files saved to:")
+            print("  • weibo_cookies.json (JSON format)")
+            print("  • weibo_cookies.txt  (String format)")
+            print("\nYou can use these Cookie files in other programs\n")
 
-        # input("按 Enter 键关闭浏览器...")
+        # input("Press Enter to close browser...")
 
     except KeyboardInterrupt:
-        print("\n\n⚠️  用户中断程序")
+        print("\n\nProgram interrupted by user")
     except Exception as e:
-        print(f"\n❌ 程序异常: {e}")
+        print(f"\nProgram exception: {e}")
     finally:
         weibo.close()
-#测试更新
 
+
+# Test update
 
 
 if __name__ == '__main__':
