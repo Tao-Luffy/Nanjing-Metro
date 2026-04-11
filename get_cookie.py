@@ -146,7 +146,7 @@ class WeiboLogin:
 
 def main():
     print("\n" + "=" * 60)
-    print("   微博手动登录获取 Cookie 工具")
+    print("")
     print("=" * 60 + "\n")
 
     weibo = WeiboLogin()
