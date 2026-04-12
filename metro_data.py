@@ -10,7 +10,7 @@ import get_cookie
 
 
 class NanjingSubwayDataCollector:
-    """南京地铁数据收集器"""
+    """Nanjing Metro Data Collector"""
 
     def __init__(self, config_file: str = "config.json", cookie_file: str = "weibo_cookies.txt"):
         self.cookie_file = cookie_file
@@ -21,48 +21,48 @@ class NanjingSubwayDataCollector:
         self.config = self.load_config(config_file)
         self.all_lines = [line["name"] for line in self.config["lines"]]
         self.line_info = {line["name"]: line for line in self.config["lines"]}
-        # 初始化 Cookie
+        # Initialize Cookie
         self._init_cookie()
 
     def _init_cookie(self):
-        """初始化 Cookie"""
+        """Initialize Cookie"""
         print("\n" + "=" * 60)
-        print("   Cookie 管理")
+        print("   Cookie Management")
         print("=" * 60 + "\n")
 
-        # 尝试加载本地 Cookie
+        # Attempt to load local Cookie
         self.cookie = self._load_cookie_from_file()
         # return cookie
 
     def _load_cookie_from_file(self) -> Optional[str]:
-        """从文件加载 Cookie"""
+        """Load Cookie from file"""
         if os.path.exists(self.cookie_file):
             try:
                 with open(self.cookie_file, 'r', encoding='utf-8') as f:
                     return f.read().strip()
             except Exception as e:
-                print(f"读取 Cookie 文件失败: {e}")
+                print(f"Failed to read Cookie file: {e}")
         return None
 
     def load_config(self, config_file: str) -> Dict:
-        """加载配置文件"""
+        """Load configuration file"""
         try:
             with open(config_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except FileNotFoundError:
-            print(f"配置文件 {config_file} 未找到")
+            print(f"Configuration file {config_file} not found")
         except json.JSONDecodeError as e:
-            print(f"配置文件解析错误: {e}")
+            print(f"Configuration file parsing error: {e}")
 
     def search_weibo(self, page: int) -> dict:
         """
-        搜索微博数据
+        Search Weibo data
 
         Args:
-            page: 页码
+            page: Page number
 
         Returns:
-            dict: 返回的JSON数据
+            dict: Returned JSON data
         """
         headers = {
             "Accept": "application/json, text/plain, */*",
@@ -86,20 +86,20 @@ class NanjingSubwayDataCollector:
 
     def extract_passenger_data(self, text: str) -> Optional[Dict[str, float]]:
         """
-        从文本中提取客流数据
+        Extract passenger data from text
 
         Args:
-            text: 包含客流数据的文本
+            text: Text containing passenger flow data
 
         Returns:
-            Optional[Dict[str, float]]: 线路到客流量的字典，如果提取失败返回None
+            Optional[Dict[str, float]]: Dictionary mapping line to passenger volume, None if extraction fails
         """
-        # 动态生成线路正则表达式模式
+        # Dynamically generate line regex patterns
         line_patterns = {}
         for line in self.all_lines:
-            # 处理线路名称中的数字和字母
-            line_name_clean = line.replace("号线", "")
-            pattern = rf'{line.replace("号线", "号线")}\s*(\d+(?:\.\d+)?)'
+            # Handle numbers and letters in line names
+            line_name_clean = line.replace("Line", "")
+            pattern = rf'{line.replace("Line", "Line")}\s*(\d+(?:\.\d+)?)'
             line_patterns[line] = pattern
 
         passenger_data = {}
@@ -110,42 +110,44 @@ class NanjingSubwayDataCollector:
                 try:
                     passenger_data[line_name] = float(match.group(1))
                 except ValueError:
-                    # 如果转换失败，尝试查找"停运"关键字
-                    if "停运" in text or f"{line_name}停运" in text:
+                    # If conversion fails, try to find "suspended" keyword
+                    if "suspended" in text or f"{line_name} suspended" in text:
                         passenger_data[line_name] = 0.0
                     else:
                         passenger_data[line_name] = None
             else:
-                # 检查是否有停运的情况
-                if f"{line_name}停运" in text:
+                # Check for suspended service case
+                if f"{line_name} suspended" in text:
                     passenger_data[line_name] = 0.0
                 else:
                     passenger_data[line_name] = None
 
-        # 提取总客流量（如果有）
-        total_pattern = r'客运量\s*(\d+(?:\.\d+)?)'
+        # Extract total passenger volume (if available)
+        total_pattern = r'Passenger Volume\s*(\d+(?:\.\d+)?)'
         total_match = re.search(total_pattern, text)
         if total_match:
             try:
-                passenger_data["总客流量"] = float(total_match.group(1))
+                passenger_data["total_passengers"] = float(total_match.group(1))
             except ValueError:
-                passenger_data["总客流量"] = None
+                passenger_data["total_passengers"] = None
 
         return passenger_data if passenger_data else None
 
     def extract_date(self, text: str) -> Optional[str]:
         """
-        从文本中提取日期
+        Extract date from text
 
         Args:
-            text: 包含日期的文本
+            text: Text containing date
 
         Returns:
-            Optional[str]: 格式为"MM-DD"的日期字符串，如果提取失败返回None
+            Optional[str]: Date string in "MM-DD" format, None if extraction fails
         """
-        # 匹配"X月X日"的格式
-        date_pattern = r'(\d{1,2})月(\d{1,2})日'
-        match = re.search(date_pattern, text)
+        # Match "Month Day" format (Chinese or English)
+        date_pattern = r'(\d{1,2})\s*[Month]\s*(\d{1,2})\s*[Day]'
+        # Alternative pattern for numeric dates like MM/DD or MM-DD
+        alt_pattern = r'(\d{1,2})[/-](\d{1,2})'
+        match = re.search(date_pattern, text) or re.search(alt_pattern, text)
 
         if match:
             month = match.group(1).zfill(2)
@@ -156,10 +158,10 @@ class NanjingSubwayDataCollector:
 
     def collect_data(self) -> List[Dict]:
         """
-        收集南京地铁客流数据
+        Collect Nanjing Metro passenger data
 
         Returns:
-            List[Dict]: 包含日期和客流数据的字典列表
+            List[Dict]: List of dictionaries containing date and passenger data
         """
         passenger_records = []
         max_pages = self.config["data_source"].get("max_pages", 10)
@@ -173,14 +175,14 @@ class NanjingSubwayDataCollector:
                     for item in response['data']['list']:
                         text = item.get('text_raw', '')
 
-                        # 跳过非客流相关的内容
-                        if '客流' not in text or '南京地铁' not in text:
+                        # Skip non-passenger-flow related content
+                        if 'passenger' not in text or 'Nanjing Metro' not in text:
                             continue
 
-                        # 提取日期
+                        # Extract date
                         date_str = self.extract_date(text)
 
-                        # 提取客流数据
+                        # Extract passenger data
                         passenger_data = self.extract_passenger_data(text)
 
                         if date_str and passenger_data:
@@ -191,18 +193,18 @@ class NanjingSubwayDataCollector:
                             }
                             passenger_records.append(record)
 
-                print(f"已处理第 {page} 页数据")
+                print(f"Processed page {page}")
 
             except Exception as e:
-                print(f"处理第 {page} 页数据时出错: {e}")
-                print(f"❌ {e}")
+                print(f"Error processing page {page}: {e}")
+                print(f"Error: {e}")
                 if not error_notified:
                     sm.send_email()
                     error_notified = True
-                    #  try:
+                    # try:
                     #     get_cookie.main()
                     # except:
-                    #     print('❌cookie自动更新失败')
+                    #     print('Cookie auto-update failed')
                 continue
 
 
@@ -211,7 +213,7 @@ class NanjingSubwayDataCollector:
         return passenger_records
 
     def _organize_by_line(self):
-        """按线路整理数据"""
+        """Organize data by line"""
         for line in self.all_lines:
             self.line_data[line] = []
             for record in self.passenger_records:
@@ -219,34 +221,34 @@ class NanjingSubwayDataCollector:
                 self.line_data[line].append({
                     "date": record['date'],
                     "passenger_count": value,
-                    "total": record['passenger_data'].get('总客流量')
+                    "total": record['passenger_data'].get('total_passengers')
                 })
 
     def get_line_colors(self) -> Dict[str, str]:
-        """获取所有线路的颜色配置"""
+        """Get color configuration for all lines"""
         colors = {}
         for line in self.line_info.values():
             colors[line["name"]] = line.get("color", "#CCCCCC")
         return colors
 
     def get_line_info(self, line_name: str) -> Dict:
-        """获取指定线路的详细信息"""
+        """Get detailed information for a specific line"""
         return self.line_info.get(line_name, {})
 
     def get_latest_date(self) -> str:
-        """获取最新日期"""
+        """Get the latest date"""
         if not self.passenger_records:
             return ""
         return self.passenger_records[0]['date']
 
     def get_latest_data(self) -> Dict:
-        """获取最新一天的数据"""
+        """Get data for the most recent day"""
         if not self.passenger_records:
             return {}
         return self.passenger_records[0]
 
     def get_last_n_days(self, n: int = None) -> List[Dict]:
-        """获取最近n天的数据"""
+        """Get data for the last n days"""
         if not self.passenger_records:
             return []
         if n is None:
@@ -254,7 +256,7 @@ class NanjingSubwayDataCollector:
         return self.passenger_records[:min(n, len(self.passenger_records))]
 
     def get_line_last_n_days(self, line_name: str, n: int = None) -> List[Dict]:
-        """获取指定线路最近n天的数据"""
+        """Get data for a specific line for the last n days"""
         if line_name not in self.line_data:
             return []
         if n is None:
@@ -262,13 +264,13 @@ class NanjingSubwayDataCollector:
         return self.line_data[line_name][:min(n, len(self.line_data[line_name]))]
 
     def get_latest_line_proportions(self) -> Dict[str, float]:
-        """获取最新一天各线路占比"""
+        """Get proportion of each line for the latest day"""
         latest_data = self.get_latest_data()
         if not latest_data:
             return {}
 
         passenger_data = latest_data['passenger_data']
-        total = passenger_data.get('总客流量')
+        total = passenger_data.get('total_passengers')
         if not total:
             return {}
 
@@ -281,14 +283,14 @@ class NanjingSubwayDataCollector:
         return proportions
 
     def get_last_n_days_line_data(self, n: int = None) -> pd.DataFrame:
-        """获取最近n天各线路数据（DataFrame格式）"""
+        """Get line data for the last n days in DataFrame format"""
         if n is None:
             n = 30
         last_n_days = self.get_last_n_days(n)
 
         data = []
         for record in last_n_days:
-            row = {'date': record['date'], 'total': record['passenger_data'].get('总客流量')}
+            row = {'date': record['date'], 'total': record['passenger_data'].get('total_passengers')}
             for line in self.all_lines:
                 row[line] = record['passenger_data'].get(line)
             data.append(row)
@@ -297,14 +299,14 @@ class NanjingSubwayDataCollector:
         return df
 
     def get_last_n_days_proportions(self, n: int = None) -> pd.DataFrame:
-        """获取最近n天各线路占比（DataFrame格式）"""
+        """Get proportion of each line for the last n days in DataFrame format"""
         if n is None:
             n = self.config["visualization"].get("default_days", 7)
         df = self.get_last_n_days_line_data(n)
 
-        # 计算每条线路的占比
+        # Calculate proportion for each line
         for line in self.all_lines:
             if line in df.columns:
-                df[f'{line}_占比'] = df[line] / df['total'] * 100
+                df[f'{line}_proportion'] = df[line] / df['total'] * 100
 
         return df

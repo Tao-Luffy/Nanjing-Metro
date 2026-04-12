@@ -12,8 +12,8 @@ recipient_emails = [
     "1989859094@qq.com",
     "1544825840@qq.com",
 ]
-subject = "更新通知"
-body = "Cookie已经失效请尽快更新。\n 网站地址：https://unqualified-developers.github.io/"
+subject = "update message"
+body = "Please update cookie.\n https://unqualified-developers.github.io/"
 
 def send_email():
     msg = MIMEText(body, "plain", "utf-8")

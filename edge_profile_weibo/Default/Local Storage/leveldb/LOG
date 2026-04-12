@@ -1,10 +1,5 @@
-2026/03/01-15:37:20.632 ef8 Reusing MANIFEST G:\Nanjing-Metro-main\Nanjing-Metro-main\edge_profile_weibo\Default\Local Storage\leveldb/MANIFEST-000001
-2026/03/01-15:37:20.919 ef8 Recovering log #4
-2026/03/01-15:37:21.159 ef8 Level-0 table #6: started
-2026/03/01-15:37:21.263 ef8 Level-0 table #6: 117062 bytes OK
-2026/03/01-15:37:21.266 ef8 Recovering log #5
-2026/03/01-15:37:21.268 ef8 Reusing old log G:\Nanjing-Metro-main\Nanjing-Metro-main\edge_profile_weibo\Default\Local Storage\leveldb/000005.log 
-2026/03/01-15:37:21.457 ef8 Delete type=0 #4
-2026/03/01-15:38:21.975 151c Level-0 table #8: started
-2026/03/01-15:38:22.051 151c Level-0 table #8: 144184 bytes OK
-2026/03/01-15:38:22.234 151c Delete type=0 #5
+2026/04/12-12:57:38.885 1818 Reusing MANIFEST E:\programs\pyprograms\Nanjing-Metro\edge_profile_weibo\Default\Local Storage\leveldb/MANIFEST-000001
+2026/04/12-12:57:38.893 1818 Recovering log #5
+2026/04/12-12:57:38.894 1818 Level-0 table #8: started
+2026/04/12-12:57:39.137 1818 Level-0 table #8: 163214 bytes OK
+2026/04/12-12:57:39.561 1818 Delete type=0 #5
