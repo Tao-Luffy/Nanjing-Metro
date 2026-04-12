@@ -261,7 +261,6 @@ class NanjingSubwayVisualizer:
                       frameon=True,
                       fancybox=True)
 
-            # Adjust layout to leave more space for bottom legend
             plt.tight_layout(rect=[0, 0.25, 1, 0.95])
 
             os.makedirs('docs/images', exist_ok=True)
