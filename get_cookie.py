@@ -31,7 +31,7 @@ class WeiboLogin:
                 'source': 'Object.defineProperty(navigator, "webdriver", {get: () => undefined})'
             })
 
-            print("✓ Browser started successfully!\n")
+            print("Browser started successfully!\n")
             return True
         except Exception as e:
             print(f"Failed to start browser: {e}")
@@ -57,7 +57,7 @@ class WeiboLogin:
 
         # Skip if already logged in
         if 'login' not in self.driver.current_url.lower():
-            print("\n✓ Login state detected, skipping manual login\n")
+            print("\nLogin state detected, skipping manual login\n")
             return True
 
         # Wait for user to manually log in
@@ -68,7 +68,7 @@ class WeiboLogin:
         page_title = self.driver.title
 
         if 'login' not in current_url.lower() and 'weibo' in current_url:
-            print(f"\n✓ Login successful! Current page: {page_title}\n")
+            print(f"\nLogin successful! Current page: {page_title}\n")
             return True
         else:
             print("\nLogin does not appear to be successful")
@@ -91,7 +91,7 @@ class WeiboLogin:
                 print("No Cookies retrieved")
                 return None
 
-            print(f"✓ Successfully retrieved {len(cookies)} Cookies\n")
+            print(f"Successfully retrieved {len(cookies)} Cookies\n")
 
             # Display Cookie list
             print("Cookie list:")
@@ -104,7 +104,7 @@ class WeiboLogin:
             # Save as JSON format
             with open('weibo_cookies.json', 'w', encoding='utf-8') as f:
                 json.dump(cookies, f, indent=2, ensure_ascii=False)
-            print("✓ Cookies saved to: weibo_cookies.json")
+            print("Cookies saved to: weibo_cookies.json")
 
             # Save as string format
             cookie_list = [f"{c['name']}={c['value']}" for c in cookies]
@@ -112,7 +112,7 @@ class WeiboLogin:
 
             with open('weibo_cookies.txt', 'w', encoding='utf-8') as f:
                 f.write(cookie_string)
-            print("✓ Cookie string saved to: weibo_cookies.txt")
+            print("Cookie string saved to: weibo_cookies.txt")
 
             # Display prompt in browser
             js_code = f'alert("Successfully retrieved {len(cookies)} Cookies!\\n\\nSaved to local files")'
@@ -168,7 +168,7 @@ def main():
 
         if cookies:
             print("=" * 60)
-            print("   ✓ All operations completed!")
+            print("All operations completed!")
             print("=" * 60)
             print("\nCookie files saved to:")
             print("  • weibo_cookies.json (JSON format)")
