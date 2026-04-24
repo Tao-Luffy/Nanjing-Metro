@@ -34,9 +34,9 @@ jobs:
         mkdir -p docs/images
         mkdir -p docs/data
 
-    - name: Get cookie
+    - name: Get html
       run: |
-        python get_cookie.py
+        python get_html.py
 
     - name: Run analysis
       run: python main.py
