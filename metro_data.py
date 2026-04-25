@@ -2,11 +2,8 @@ import requests
 import re
 import json
 import os
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime, timedelta
+from typing import Dict, List, Optional
 import pandas as pd
-import send_email as sm
-import get_cookie
 
 
 class NanjingSubwayDataCollector:
@@ -199,7 +196,6 @@ class NanjingSubwayDataCollector:
                 print(f"Error processing page {page}: {e}")
                 print(f"Error: {e}")
                 if not error_notified:
-                    sm.send_email()
                     error_notified = True
                     # try:
                     #     get_cookie.main()
