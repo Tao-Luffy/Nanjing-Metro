@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
-from an import extract_passenger_data
+from analysis_html import extract_passenger_data
 
 
 class NanjingSubwayDataCollector:
