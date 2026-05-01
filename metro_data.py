@@ -1,48 +1,29 @@
-import requests
-import re
 import json
-import os
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime, timedelta
+import re
+from typing import Dict, List, Optional
+
 import pandas as pd
-import send_email as sm
-import get_cookie
+
+from analysis_html import extract_passenger_data
 
 
 class NanjingSubwayDataCollector:
     """Nanjing Metro Data Collector"""
 
-    def __init__(self, config_file: str = "config.json", cookie_file: str = "weibo_cookies.txt"):
-        self.cookie_file = cookie_file
-        self.cookie = None
-        self.driver = None
+    def __init__(self, config_file: str = "config.json"):
         self.passenger_records = []
         self.line_data = {}
         self.config = self.load_config(config_file)
         self.all_lines = [line["name"] for line in self.config["lines"]]
         self.line_info = {line["name"]: line for line in self.config["lines"]}
-        # Initialize Cookie
-        self._init_cookie()
 
-    def _init_cookie(self):
-        """Initialize Cookie"""
-        print("\n" + "=" * 60)
-        print("   Cookie Management")
-        print("=" * 60 + "\n")
-
-        # Attempt to load local Cookie
-        self.cookie = self._load_cookie_from_file()
-        # return cookie
-
-    def _load_cookie_from_file(self) -> Optional[str]:
-        """Load Cookie from file"""
-        if os.path.exists(self.cookie_file):
-            try:
-                with open(self.cookie_file, 'r', encoding='utf-8') as f:
-                    return f.read().strip()
-            except Exception as e:
-                print(f"Failed to read Cookie file: {e}")
-        return None
+    def collect_data(self):
+        with open('page.html', 'r', encoding='utf-8') as f:
+            html = f.read()
+        html_source = extract_passenger_data(html)
+        passenger_records = html_source
+        self.passenger_records = passenger_records
+        return passenger_records
 
     def load_config(self, config_file: str) -> Dict:
         """Load configuration file"""
@@ -53,36 +34,6 @@ class NanjingSubwayDataCollector:
             print(f"Configuration file {config_file} not found")
         except json.JSONDecodeError as e:
             print(f"Configuration file parsing error: {e}")
-
-    def search_weibo(self, page: int) -> dict:
-        """
-        Search Weibo data
-
-        Args:
-            page: Page number
-
-        Returns:
-            dict: Returned JSON data
-        """
-        headers = {
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Accept-Language": "zh-CN,zh;q=0.9",
-            "Cookie": self.cookie,
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0",
-            "X-Requested-With": "XMLHttpRequest",
-            "Referer": "https://weibo.com/u/2638276292"
-        }
-
-        params = {
-            "uid": self.config["data_source"]["weibo_user_id"],
-            "page": page,
-            "q": self.config["data_source"]["search_keyword"]
-        }
-
-        url = "https://weibo.com/ajax/statuses/searchProfile?"
-
-        return requests.get(url, headers=headers, params=params).json()
 
     def extract_passenger_data(self, text: str) -> Optional[Dict[str, float]]:
         """
@@ -155,62 +106,6 @@ class NanjingSubwayDataCollector:
             return f"{month}-{day}"
 
         return None
-
-    def collect_data(self) -> List[Dict]:
-        """
-        Collect Nanjing Metro passenger data
-
-        Returns:
-            List[Dict]: List of dictionaries containing date and passenger data
-        """
-        passenger_records = []
-        max_pages = self.config["data_source"].get("max_pages", 10)
-        error_notified = False
-
-        for page in range(1, max_pages):
-            try:
-                response = self.search_weibo(page)
-
-                if 'data' in response and 'list' in response['data']:
-                    for item in response['data']['list']:
-                        text = item.get('text_raw', '')
-
-                        # Skip non-passenger-flow related content
-                        if 'passenger' not in text or 'Nanjing Metro' not in text:
-                            continue
-
-                        # Extract date
-                        date_str = self.extract_date(text)
-
-                        # Extract passenger data
-                        passenger_data = self.extract_passenger_data(text)
-
-                        if date_str and passenger_data:
-                            record = {
-                                "date": date_str,
-                                "passenger_data": passenger_data,
-                                "raw_text": text[:100]
-                            }
-                            passenger_records.append(record)
-
-                print(f"Processed page {page}")
-
-            except Exception as e:
-                print(f"Error processing page {page}: {e}")
-                print(f"Error: {e}")
-                if not error_notified:
-                    sm.send_email()
-                    error_notified = True
-                    # try:
-                    #     get_cookie.main()
-                    # except:
-                    #     print('Cookie auto-update failed')
-                continue
-
-
-        self.passenger_records = passenger_records
-        self._organize_by_line()
-        return passenger_records
 
     def _organize_by_line(self):
         """Organize data by line"""
