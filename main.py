@@ -2,6 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
+import io
+
+# 修复 Windows 控制台编码问题，支持中文输出
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 # Then import other libraries
 import matplotlib
@@ -19,7 +25,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('metro_analysis.log'),
+        logging.FileHandler('metro_analysis.log', encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -150,6 +156,13 @@ class NanjingSubwayVisualizer:
                 logger.warning(f"No data found for the last {n_days} days")
                 return None
 
+            # 数据层已经完成类型转换，这里无需重复，但可以添加额外的数据清洗
+            # 例如删除含有NaN的行
+            df = df.dropna(subset=['date', 'total'])
+            if df.empty:
+                logger.warning("After dropping NaN, no valid data remains.")
+                return None
+
             # Reverse data to correct chronological order
             df = df.iloc[::-1].reset_index(drop=True)
 
@@ -207,6 +220,9 @@ class NanjingSubwayVisualizer:
             if df.empty:
                 logger.warning(f"No data found for the last {n_days} days")
                 return None
+
+            # 数据清洗：删除整行全为NaN的线路列（但保留date列）
+            # 因为 date 和 total 已有类型转换，无需额外处理
 
             # Reverse data to correct chronological order
             df = df.iloc[::-1].reset_index(drop=True)
