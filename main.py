@@ -202,7 +202,7 @@ class NanjingSubwayVisualizer:
                         markersize=8)
 
             ax.set_xlabel('日期', fontsize=30, fontweight='bold')
-            ax.set_ylabel('总客流量（万）', fontsize=30, fontweight='bold')  # 修改单位：万人次 -> 万
+            ax.set_ylabel('总客流量（万）', fontsize=30, fontweight='bold')
 
             ax.legend(['总客流量'], loc='lower right', fontsize=30, title=None)
             ax.grid(True, alpha=0.3, linestyle='--')
@@ -227,27 +227,22 @@ class NanjingSubwayVisualizer:
             return None
 
     def plot_last_n_days_line_trend(self, n_days=30):
-        """各线路站点客流强度趋势图（原站均客流量）"""
+        """各线路站点客流强度趋势图"""
         try:
             df = self.data_collector.get_last_n_days_line_data(n_days)
             if df.empty:
                 logger.warning(f"未找到最近 {n_days} 天的数据")
                 return None
 
-            # 确保 date 列是 datetime
             df['date'] = pd.to_datetime(df['date'], errors='coerce')
-            # 删除日期为 NaN 的行
             df = df.dropna(subset=['date'])
             if df.empty:
                 logger.warning("日期列无效")
                 return None
 
-            # 反转数据以按时间正序
             df = df.iloc[::-1].reset_index(drop=True)
 
             line_info = self.data_collector.line_info
-
-            # 增加图表高度，为底部图例预留空间
             fig, ax = plt.subplots(figsize=(14, 21))
 
             legend_handles = []
@@ -256,45 +251,28 @@ class NanjingSubwayVisualizer:
             for line in self.data_collector.all_lines:
                 if line in df.columns and df[line].notna().any():
                     color = self.line_colors.get(line, '#CCCCCC')
-
                     stations = line_info.get(line, {}).get('stations', 1)
                     if stations == 0:
                         stations = 1
-
                     station_intensity = df[line] / stations
-
                     line_plot = ax.plot(df['date'], station_intensity,
-                                        color=color,
-                                        marker='o',
-                                        linewidth=2.5,
-                                        markersize=8)
-
+                                        color=color, marker='o', linewidth=2.5, markersize=8)
                     legend_handles.append(line_plot[0])
                     legend_labels.append(f'{line} ({stations}站)')
 
             ax.set_xlabel('日期', fontsize=30, fontweight='bold')
             ax.set_ylabel('站点客流强度（万/站）', fontsize=30, fontweight='bold')
-
             ax.grid(True, alpha=0.3, linestyle='--')
-
             plt.xticks(rotation=45, ha='right', fontsize=12)
             plt.yticks(fontsize=12)
-
             ax.set_ylim(bottom=0)
 
-            # 图例放在图表下方，三列显示
             ax.legend(legend_handles, legend_labels,
-                      loc='upper center',
-                      bbox_to_anchor=(0, -0.45, 1, 0.2),
-                      ncol=3,
-                      mode="expand",
-                      borderaxespad=0,
-                      fontsize=30,
-                      frameon=True,
-                      fancybox=True)
+                      loc='upper center', bbox_to_anchor=(0, -0.45, 1, 0.2),
+                      ncol=3, mode="expand", borderaxespad=0,
+                      fontsize=30, frameon=True, fancybox=True)
 
             plt.tight_layout(rect=[0, 0.25, 1, 0.95])
-
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/last_{n_days}_days_station_intensity_trend.png',
                         dpi=300, bbox_inches='tight')
@@ -315,71 +293,48 @@ class NanjingSubwayVisualizer:
                 logger.warning(f"未找到最近 {n_days} 天的数据")
                 return None
 
-            # 确保 date 列是 datetime
             df['date'] = pd.to_datetime(df['date'], errors='coerce')
             df = df.dropna(subset=['date'])
             if df.empty:
                 logger.warning("日期列无效")
                 return None
 
-            # 反转数据以按时间正序
             df = df.iloc[::-1].reset_index(drop=True)
 
-            # 获取所有线路列（排除 'total' 和 'date'）
             valid_line_columns = [col for col in df.columns if col in self.data_collector.all_lines]
-
             if not valid_line_columns:
                 logger.warning("未找到有效的线路数据")
                 return None
 
-            # 计算每日总客流量（所有线路之和）
             total_passengers = df[valid_line_columns].sum(axis=1).values
-            total_passengers = np.where(total_passengers == 0, 1, total_passengers)  # 避免除零
+            total_passengers = np.where(total_passengers == 0, 1, total_passengers)
 
             fig, ax = plt.subplots(figsize=(14, 19))
-
             legend_handles = []
             legend_labels = []
 
             for line in self.data_collector.all_lines:
                 if line in df.columns and df[line].notna().any():
                     color = self.line_colors.get(line, '#CCCCCC')
-
-                    # 计算每日占比
                     proportions = (df[line].values / total_passengers) * 100
-
                     line_plot = ax.plot(df['date'], proportions,
-                                        color=color,
-                                        marker='o',
-                                        linewidth=2.5,
-                                        markersize=8)
-
+                                        color=color, marker='o', linewidth=2.5, markersize=8)
                     legend_handles.append(line_plot[0])
                     legend_labels.append(line)
 
             ax.set_xlabel('日期', fontsize=30, fontweight='bold')
             ax.set_ylabel('线路占比（%）', fontsize=30, fontweight='bold')
-
             ax.grid(True, alpha=0.3, linestyle='--')
-
             plt.xticks(rotation=45, ha='right', fontsize=12)
             plt.yticks(fontsize=12)
-
             ax.set_ylim(bottom=0)
 
-            # 图例放在图表下方，最多4列
             ax.legend(legend_handles, legend_labels,
-                      loc='upper center',
-                      bbox_to_anchor=(0, -0.45, 1, 0.2),
-                      ncol=min(4, len(legend_labels)),
-                      mode="expand",
-                      borderaxespad=0,
-                      fontsize=30,
-                      frameon=True,
-                      fancybox=True)
+                      loc='upper center', bbox_to_anchor=(0, -0.45, 1, 0.2),
+                      ncol=min(4, len(legend_labels)), mode="expand", borderaxespad=0,
+                      fontsize=30, frameon=True, fancybox=True)
 
             plt.tight_layout(rect=[0, 0.25, 1, 0.95])
-
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/last_{n_days}_days_line_proportion_trend.png',
                         dpi=300, bbox_inches='tight')
@@ -410,10 +365,10 @@ def main():
 
             # 如果总客流量为 0，尝试从线路数据计算
             if total == 0:
-                df = collector.get_last_n_days_line_data(1)
-                if not df.empty:
-                    line_cols = [col for col in df.columns if col in collector.all_lines]
-                    total = df[line_cols].sum(axis=1).iloc[0]
+                df_temp = collector.get_last_n_days_line_data(1)
+                if not df_temp.empty:
+                    line_cols = [col for col in df_temp.columns if col in collector.all_lines]
+                    total = df_temp[line_cols].sum(axis=1).iloc[0]
                     logger.info(f"总客流量从线路数据计算得到: {total:.1f} 万")
                 else:
                     total = 0.0
@@ -449,27 +404,46 @@ def main():
             if fig4:
                 logger.info("   线路占比趋势图已保存")
 
-            os.makedirs('docs/data', exist_ok=True)
+            # ========== 准备保存数据，修正 total 列 ==========
             df = collector.get_last_n_days_line_data()
             if not df.empty:
-                # 保存 CSV 时，将 date 列转换回字符串
+                # 确保日期格式
+                df['date'] = pd.to_datetime(df['date'], errors='coerce')
+
+                # 获取所有线路列
+                line_cols = [col for col in df.columns if col in collector.all_lines]
+
+                # 计算每行的实际总客流量（线路之和）
+                df['total_calculated'] = df[line_cols].sum(axis=1)
+
+                # 如果原 total 列全为0或NaN，则用计算值覆盖
+                if df['total'].isna().all() or (df['total'] == 0).all():
+                    df['total'] = df['total_calculated']
+                    logger.info("CSV/JSON 中的 total 列已用线路之和更新")
+                # 如果只有部分行为0，也可以选择覆盖（这里保持原逻辑，但为了数据一致性，可以全部覆盖）
+                # 为确保一致性，建议全部使用计算值
+                df['total'] = df['total_calculated']
+
+                # 删除临时列
+                df = df.drop(columns=['total_calculated'])
+
+                # 保存 CSV，日期转为字符串
                 df_csv = df.copy()
                 df_csv['date'] = df_csv['date'].dt.strftime('%Y-%m-%d')
                 df_csv.to_csv('docs/data/recent_passenger_data.csv', index=False, encoding='utf-8-sig')
 
-                # 生成 JSON 数据前，将 DataFrame 中的 Timestamp 转换为字符串
+                # 生成 JSON 数据
                 records = df.to_dict('records')
                 for record in records:
                     if 'date' in record and hasattr(record['date'], 'strftime'):
                         record['date'] = record['date'].strftime('%Y-%m-%d')
-                    # 确保所有数值都是 Python 原生类型
                     for key, value in record.items():
-                        if hasattr(value, 'item'):  # numpy 类型
+                        if hasattr(value, 'item'):  # numpy 类型转为原生 Python 类型
                             record[key] = value.item()
 
                 json_data = {
                     'latest_date': latest_date,
-                    'latest_total': float(total),
+                    'latest_total': float(total),  # 使用修正后的总客流量
                     'data': records,
                     'update_time': datetime.now().isoformat(),
                     'line_info': {}
@@ -486,7 +460,8 @@ def main():
                 with open('docs/data/latest_data.json', 'w', encoding='utf-8') as f:
                     json.dump(json_data, f, ensure_ascii=False, indent=2)
 
-                logger.info("数据已保存为 CSV 和 JSON 格式")
+                logger.info("数据已保存为 CSV 和 JSON 格式（total 列已修正）")
+            # ================================================
 
             logger.info("分析完成！")
 
