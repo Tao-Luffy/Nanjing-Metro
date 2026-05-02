@@ -55,14 +55,20 @@ def generate_html_report():
                         json_data = json.load(f)
                     latest_date = json_data.get('latest_date', 'N/A')
                     latest_total = json_data.get('latest_total', 'N/A')
+                    # 确保 latest_total 是数值（字符串可能含逗号等）
+                    try:
+                        latest_total = float(latest_total)
+                    except (ValueError, TypeError):
+                        latest_total = 0.0
                     print(f"JSON 数据已从 {file_path} 加载")
                     break
             except Exception as e:
                 print(f"读取 {file_path} 时出错: {e}")
                 continue
 
-    # 计算统计数据（如果存在数据）
+    # ========== 重要：先计算统计量，再重命名列名 ==========
     if not df.empty and 'total' in df.columns:
+        # 计算统计数据（此时列名还是原始的 'total'）
         avg_total = df['total'].mean()
         max_total = df['total'].max()
         min_total = df['total'].min()
@@ -77,13 +83,13 @@ def generate_html_report():
             week_change_amount = df['total'].iloc[0] - df['total'].iloc[7]
             week_change_pct = (week_change_amount / df['total'].iloc[7] * 100) if df['total'].iloc[7] != 0 else 0
 
-        # 将列名改为中文，用于表格显示
+        # 最后才将列名改为中文，用于表格显示（不影响上面计算）
         df = df.rename(columns={
             'date': '日期',
             'total': '总客流量（万）'
         })
     else:
-        # 如果没有 CSV 数据，尝试从日志文件提取
+        # 如果没有 CSV 数据，尝试从日志文件提取（main.py 输出的是中文）
         log_file = 'metro_analysis.log'
         if os.path.exists(log_file):
             try:
