@@ -9,9 +9,9 @@ import pandas as pd
 
 
 def generate_html_report():
-    """Generate HTML report"""
+    """生成 HTML 报告（中文版）"""
 
-    # Initialize variables
+    # 初始化变量
     df = pd.DataFrame()
     latest_date = "N/A"
     latest_total = "N/A"
@@ -23,104 +23,101 @@ def generate_html_report():
     week_change_pct = 0
     week_change_amount = 0
 
-    # Try to read data from multiple locations
+    # 尝试从多个位置读取数据
     possible_files = [
         'docs/data/recent_passenger_data.csv',
         'recent_passenger_data.csv',
         'docs/data/latest_data.json'
     ]
 
-    # First try to read CSV data
+    # 优先读取 CSV 数据
     for file_path in possible_files:
         if os.path.exists(file_path):
             try:
                 if file_path.endswith('.csv'):
                     df = pd.read_csv(file_path, encoding='utf-8')
                     if not df.empty:
-                        # Ensure 'total' column is numeric, coercing errors to NaN and then fill with 0
+                        # 确保 'total' 列为数值，无效值转为 NaN 再填 0
                         if 'total' in df.columns:
                             df['total'] = pd.to_numeric(df['total'], errors='coerce').fillna(0)
                         else:
-                            print(f"Warning: 'total' column not found in {file_path}")
+                            print(f"警告: 文件 {file_path} 中未找到 'total' 列")
                             continue
 
-                        # Extract latest date and total passengers
+                        # 提取最新日期和最新总客流量
                         if 'date' in df.columns and 'total' in df.columns:
                             latest_date = df['date'].iloc[0]
                             latest_total = df['total'].iloc[0]
-                            print(f"Data loaded from {file_path}")
+                            print(f"数据已从 {file_path} 加载")
                             break
                 elif file_path.endswith('.json'):
                     with open(file_path, 'r', encoding='utf-8') as f:
                         json_data = json.load(f)
                     latest_date = json_data.get('latest_date', 'N/A')
                     latest_total = json_data.get('latest_total', 'N/A')
-                    print(f"JSON data loaded from {file_path}")
+                    print(f"JSON 数据已从 {file_path} 加载")
                     break
             except Exception as e:
-                print(f"Error reading {file_path}: {e}")
+                print(f"读取 {file_path} 时出错: {e}")
                 continue
 
-    # Calculate statistics if data exists
+    # 计算统计数据（如果存在数据）
     if not df.empty and 'total' in df.columns:
         avg_total = df['total'].mean()
         max_total = df['total'].max()
         min_total = df['total'].min()
 
-        # Calculate day-over-day change
+        # 计算日环比
         if len(df) > 1:
             day_change_amount = df['total'].iloc[0] - df['total'].iloc[1]
             day_change_pct = (day_change_amount / df['total'].iloc[1] * 100) if df['total'].iloc[1] != 0 else 0
 
-        # Calculate week-over-week change (assuming consecutive data)
+        # 计算周同比（假设数据连续）
         if len(df) > 7:
             week_change_amount = df['total'].iloc[0] - df['total'].iloc[7]
             week_change_pct = (week_change_amount / df['total'].iloc[7] * 100) if df['total'].iloc[7] != 0 else 0
 
-        # Rename columns to English
+        # 将列名改为中文，用于表格显示
         df = df.rename(columns={
-            'date': 'Date',
-            'total': 'Total Passengers (10k)'
+            'date': '日期',
+            'total': '总客流量（万）'
         })
     else:
-        # If no CSV data, try to extract from log file
+        # 如果没有 CSV 数据，尝试从日志文件提取
         log_file = 'metro_analysis.log'
         if os.path.exists(log_file):
             try:
                 with open(log_file, 'r', encoding='utf-8') as f:
                     lines = f.readlines()
-                    # Find latest data
-                    for line in reversed(lines[-20:]):  # Check last 20 lines
-                        if 'Total passengers:' in line:
-                            parts = line.split('Total passengers:')
+                    # 查找最新的数据
+                    for line in reversed(lines[-20:]):  # 检查最后20行
+                        if '总客流量:' in line:
+                            parts = line.split('总客流量:')
                             if len(parts) > 1:
-                                total_str = parts[1].strip().split(' ')[0].replace('ten thousand', '')
+                                total_str = parts[1].strip().split(' ')[0].replace('万', '')
                                 try:
                                     latest_total = float(total_str)
-                                    print(f"Total passengers extracted from log: {latest_total}")
+                                    print(f"从日志提取总客流量: {latest_total}")
                                 except:
                                     pass
-                        if 'Latest data:' in line:
-                            parts = line.split('Latest data:')
+                        if '最新数据日期:' in line:
+                            parts = line.split('最新数据日期:')
                             if len(parts) > 1:
                                 latest_date = parts[1].strip()
             except Exception as e:
-                print(f"Error reading log file: {e}")
+                print(f"读取日志文件出错: {e}")
 
-    # Read config.json data
+    # 读取 config.json 获取线路信息
     with open("config.json", 'r', encoding='utf-8') as f:
         config_data = json.load(f)
         lines = config_data["lines"]
         quantity = len(lines)
-
-        # Calculate total number of stations
         total_stations = sum(line.get("stations", 0) for line in lines)
 
-    # Calculate station passenger intensity safely
+    # 计算站点客流强度
     station_intensity = 0
     if latest_total != "N/A" and total_stations > 0:
         try:
-            # Ensure latest_total is a valid number
             latest_total_num = float(latest_total)
             station_intensity = (latest_total_num * 10000) / total_stations
             if pd.isna(station_intensity):
@@ -130,19 +127,19 @@ def generate_html_report():
         except (ValueError, TypeError):
             station_intensity = 0
 
-    # Determine color for day-over-day and week-over-week changes
+    # 根据变化正负确定卡片颜色
     def get_change_color(value):
         if value > 0:
-            return "red"  # Increase - red
+            return "red"      # 上涨 - 红色
         elif value < 0:
-            return "green"  # Decrease - green
+            return "green"    # 下跌 - 绿色
         else:
-            return "black"  # No change - black
+            return "black"    # 持平 - 黑色
 
     day_color = get_change_color(day_change_pct)
     week_color = get_change_color(week_change_pct)
 
-    # Format percentage display with +/- sign
+    # 格式化百分比（带正负号）
     def format_change_pct(value):
         if value > 0:
             return f"+{value:.3f}%"
@@ -151,31 +148,31 @@ def generate_html_report():
         else:
             return f"{value:.3f}%"
 
-    # Format change amount with +/- sign and unit
+    # 格式化变化量（带正负号和单位）
     def format_change_amount(value):
         if value > 0:
-            return f"+{abs(value):.1f} w"
+            return f"+{abs(value):.1f} 万"
         elif value < 0:
-            return f"-{abs(value):.1f} w"
+            return f"-{abs(value):.1f} 万"
         else:
-            return f"{abs(value):.1f} w"
+            return f"{abs(value):.1f} 万"
 
-    # Combine percentage and amount with line break
+    # 合并百分比和变化量（换行显示）
     def format_change_with_amount(pct_value, amount_value):
         return f"{format_change_pct(pct_value)}<br>{format_change_amount(amount_value)}"
 
-    # Format line information display with line break
+    # 格式化线路信息（换行显示）
     def format_line_info(line_count, station_count):
-        return f"{line_count} lines<br>{station_count} stations"
+        return f"{line_count} 条线路<br>{station_count} 个车站"
 
-    # HTML template
+    # HTML 模板（中文版）
     html_template = f"""
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nanjing Metro Passenger Analysis - {datetime.now().strftime('%Y-%m-%d')}</title>
+    <title>南京地铁客流分析 - {datetime.now().strftime('%Y-%m-%d')}</title>
     <style>
         * {{
             margin: 0;
@@ -268,7 +265,7 @@ def generate_html_report():
             text-overflow: ellipsis;
         }}
 
-        /* Allow line breaks for change and line cards */
+        /* 允许变化卡片和线路卡片内换行 */
         .change-card .stat-value,
         .line-card .stat-value {{
             white-space: normal;
@@ -289,7 +286,7 @@ def generate_html_report():
             margin-top: 5px;
         }}
 
-        /* Single column layout for images */
+        /* 单列布局显示图片 */
         .images-grid {{
             display: flex;
             flex-direction: column;
@@ -382,7 +379,7 @@ def generate_html_report():
             font-size: 0.9em;
         }}
 
-        /* Mobile responsive adjustments */
+        /* 移动端适配 */
         @media (max-width: 1400px) {{
             .stats-grid {{
                 grid-template-columns: repeat(3, 1fr);
@@ -422,7 +419,7 @@ def generate_html_report():
             }}
         }}
 
-        /* Keep single column in landscape as well */
+        /* 横屏时也保持单列 */
         @media (orientation: landscape) {{
             .images-grid {{
                 flex-direction: column;
@@ -434,100 +431,100 @@ def generate_html_report():
 <body>
     <div class="container">
         <header>
-            <h1>Nanjing Metro Daily Passenger Analysis</h1>
-            <p class="update-time">Update Time (Beijing Time): {(datetime.now() + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')}</p>
-            <p class="update-time">Latest Data Date: {latest_date}</p>
+            <h1>南京地铁日客流分析</h1>
+            <p class="update-time">更新时间（北京时间）：{(datetime.now() + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p class="update-time">最新数据日期：{latest_date}</p>
         </header>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">Latest Daily Passengers</div>
-                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else ' w'}</div>
-                <div class="stat-label">passengers</div>
+                <div class="stat-label">最新日客流量</div>
+                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else ' 万'}</div>
+                <div class="stat-label">人次</div>
             </div>
 
             <div class="stat-card green-purple">
-                <div class="stat-label">Yesterday Station Intensity</div>
-                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}{'' if station_intensity == 0 else ' w/station'}</div>
-                <div class="stat-label">Station Intensity = Total Passengers / Total Stations</div>
+                <div class="stat-label">昨日站点客流强度</div>
+                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}{'' if station_intensity == 0 else ' 万/站'}</div>
+                <div class="stat-label">客流强度 = 总客流量 / 总车站数</div>
             </div>
 
             <div class="stat-card orange">
-                <div class="stat-label">7-Day Average</div>
-                <div class="stat-value">{avg_total:.2f} w</div>
-                <div class="stat-label">passengers</div>
+                <div class="stat-label">7日平均客流量</div>
+                <div class="stat-value">{avg_total:.2f} 万</div>
+                <div class="stat-label">人次</div>
             </div>
 
             <div class="stat-card {day_color} change-card">
-                <div class="stat-label">Day-over-Day</div>
+                <div class="stat-label">日环比</div>
                 <div class="stat-value">{format_change_with_amount(day_change_pct, day_change_amount)}</div>
-                <div class="stat-label">Compared to yesterday</div>
+                <div class="stat-label">与昨日相比</div>
             </div>
 
             <div class="stat-card {week_color} change-card">
-                <div class="stat-label">Week-over-Week</div>
+                <div class="stat-label">周同比</div>
                 <div class="stat-value">{format_change_with_amount(week_change_pct, week_change_amount)}</div>
-                <div class="stat-label">Compared to same day last week</div>
+                <div class="stat-label">与上周同日相比</div>
             </div>
 
             <div class="stat-card dark-blue line-card">
-                <div class="stat-label">Operating Lines</div>
+                <div class="stat-label">运营线路</div>
                 <div class="stat-value">{format_line_info(quantity, total_stations)}</div>
-                <div class="stat-label">Urban + Suburban lines</div>
+                <div class="stat-label">市区 + 市郊线路</div>
             </div>
         </div>
 
-        <h2>Visualization Charts</h2>
+        <h2>可视化图表</h2>
         <div class="images-grid">
             <div class="image-card">
-                <img src="images/yesterday_passenger_line_proportion.png" alt="Yesterday Line Proportion Chart" style="width:100%; height:auto;">
+                <img src="images/yesterday_passenger_line_proportion.png" alt="昨日线路客流占比图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>Yesterday Line Passenger Proportion</h3>
+                    <h3>昨日各线路客流占比</h3>
                 </div>
             </div>
 
             <div class="image-card">
-                <img src="images/last_60_days_total_passenger_trend.png" alt="Total Passenger Trend Chart" style="width:100%; height:auto;">
+                <img src="images/last_60_days_total_passenger_trend.png" alt="总客流量趋势图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>Total Passenger Trend</h3>
+                    <h3>总客流量趋势（近60天）</h3>
                 </div>
             </div>
 
             <div class="image-card">
-                <img src="images/last_30_days_station_intensity_trend.png" alt="Station Intensity Trend Chart" style="width:100%; height:auto;">
+                <img src="images/last_30_days_station_intensity_trend.png" alt="站点客流强度趋势图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>Station Intensity Trend</h3>
+                    <h3>站点客流强度趋势（近30天）</h3>
                 </div>
             </div>
 
             <div class="image-card">
-                <img src="images/last_30_days_line_proportion_trend.png" alt="Line Proportion Trend Chart" style="width:100%; height:auto;">
+                <img src="images/last_30_days_line_proportion_trend.png" alt="线路客流占比趋势图" style="width:100%; height:auto;">
                 <div class="caption">
-                    <h3>Line Passenger Proportion Trend</h3>
+                    <h3>各线路客流占比趋势（近30天）</h3>
                 </div>
             </div>
         </div>
 
-        <h2>Last 30 Days Data</h2>
+        <h2>最近30天数据明细</h2>
         <div class="table-container">
-            {df.to_html(index=False, classes='data-table') if len(df) > 0 else '<p>No data available</p>'}
+            {df.to_html(index=False, classes='data-table') if len(df) > 0 else '<p>暂无数据</p>'}
         </div>
 
         <div class="footer">
-            <p>Copyright &copy; 2025-{datetime.now().year} Nanjing Metro Passenger Analysis System | Auto-generated</p>
-            <p>Data for reference only. Please refer to official announcements for accuracy.</p>
+            <p>Copyright &copy; 2025-{datetime.now().year} 南京地铁客流分析系统 | 自动生成</p>
+            <p>数据仅供参考，准确性请以官方发布为准。</p>
         </div>
     </div>
 </body>
 </html>
 """
 
-    # Save HTML file
+    # 保存 HTML 文件
     os.makedirs('docs', exist_ok=True)
     with open('docs/index.html', 'w', encoding='utf-8') as f:
         f.write(html_template)
 
-    print("HTML report generated")
+    print("HTML 报告已生成（中文版）")
 
 
 if __name__ == "__main__":
