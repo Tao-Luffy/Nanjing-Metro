@@ -154,11 +154,11 @@ def generate_html_report():
     # Format change amount with +/- sign and unit
     def format_change_amount(value):
         if value > 0:
-            return f"+{abs(value):.1f} ten thousand"
+            return f"+{abs(value):.1f} w"
         elif value < 0:
-            return f"-{abs(value):.1f} ten thousand"
+            return f"-{abs(value):.1f} w"
         else:
-            return f"{abs(value):.1f} ten thousand"
+            return f"{abs(value):.1f} w"
 
     # Combine percentage and amount with line break
     def format_change_with_amount(pct_value, amount_value):
@@ -442,19 +442,19 @@ def generate_html_report():
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Latest Daily Passengers</div>
-                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else ' ten thousand'}</div>
+                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else ' w'}</div>
                 <div class="stat-label">passengers</div>
             </div>
 
             <div class="stat-card green-purple">
                 <div class="stat-label">Yesterday Station Intensity</div>
-                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}{'' if station_intensity == 0 else ' pax/station'}</div>
+                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}{'' if station_intensity == 0 else ' w/station'}</div>
                 <div class="stat-label">Station Intensity = Total Passengers / Total Stations</div>
             </div>
 
             <div class="stat-card orange">
                 <div class="stat-label">7-Day Average</div>
-                <div class="stat-value">{avg_total:.2f} ten thousand</div>
+                <div class="stat-value">{avg_total:.2f} w</div>
                 <div class="stat-label">passengers</div>
             </div>
 
