@@ -118,7 +118,7 @@ class NanjingSubwayVisualizer:
                       ncol=2,  # Two columns
                       fontsize=20)
 
-            center_text = f"{latest_date}\nTotal Passengers\n{total_passenger:.1f} ten thousand"
+            center_text = f"{latest_date}\nTotal Passengers\n{total_passenger:.1f} w"
             ax.text(0, 0, center_text,
                     ha='center', va='center',
                     fontsize=28, fontweight='bold',
@@ -171,7 +171,7 @@ class NanjingSubwayVisualizer:
                         markersize=8)
 
             ax.set_xlabel('Date', fontsize=30, fontweight='bold')
-            ax.set_ylabel('Total Passengers (ten thousand)', fontsize=30, fontweight='bold')
+            ax.set_ylabel('Total Passengers (w)', fontsize=30, fontweight='bold')
 
             ax.legend(['Total Passengers'], loc='lower right', fontsize=30, title=None)
             ax.grid(True, alpha=0.3, linestyle='--')
@@ -241,7 +241,7 @@ class NanjingSubwayVisualizer:
                     legend_labels.append(f'{line} ({stations} stations)')
 
             ax.set_xlabel('Date', fontsize=30, fontweight='bold')
-            ax.set_ylabel('Station Passenger Intensity (ten thousand/station)', fontsize=30, fontweight='bold')
+            ax.set_ylabel('Station Intensity (w/station)', fontsize=30, fontweight='bold')
 
             ax.grid(True, alpha=0.3, linestyle='--')
 
@@ -332,7 +332,7 @@ class NanjingSubwayVisualizer:
                     legend_labels.append(line)
 
             ax.set_xlabel('Date', fontsize=30, fontweight='bold')
-            ax.set_ylabel('Line Passenger Proportion (%)', fontsize=30, fontweight='bold')
+            ax.set_ylabel('Line Proportion (%)', fontsize=30, fontweight='bold')
 
             ax.grid(True, alpha=0.3, linestyle='--')
 
