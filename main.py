@@ -21,6 +21,7 @@ plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示为方块的问�
 # =====================================================
 
 import numpy as np
+import pandas as pd
 from metro_data import NanjingSubwayDataCollector
 import logging
 from datetime import datetime
@@ -71,14 +72,36 @@ class NanjingSubwayVisualizer:
     def plot_compact_pie_chart(self):
         """客流量占比饼图"""
         try:
-            proportions = self.data_collector.get_latest_line_proportions()
-            latest_date = self.data_collector.get_latest_date()
-
             latest_data = self.data_collector.get_latest_data()
             total_passenger = latest_data['passenger_data'].get('total_passengers', 0)
+            latest_date = self.data_collector.get_latest_date()
+
+            # 如果最新数据总客流量为 0 或 None，则从线路数据求和
+            if total_passenger == 0 or total_passenger is None:
+                df = self.data_collector.get_last_n_days_line_data(1)  # 只取最近一天
+                if not df.empty:
+                    line_cols = [col for col in df.columns if col in self.data_collector.all_lines]
+                    total_passenger = df[line_cols].sum(axis=1).iloc[0]
+                    logger.info(f"total_passenger 缺失，已使用线路客流量之和: {total_passenger:.1f} 万")
+                else:
+                    logger.warning("无法获取线路数据计算总客流量")
+                    return None
+
+            # 获取最新一天的各线路客流量并计算占比
+            df = self.data_collector.get_last_n_days_line_data(1)
+            if df.empty:
+                logger.warning("未找到最新数据")
+                return None
+
+            row = df.iloc[0]
+            proportions = {}
+            for line in self.data_collector.all_lines:
+                val = row.get(line)
+                if pd.notna(val):
+                    proportions[line] = (val / total_passenger) * 100
 
             if not proportions or total_passenger == 0:
-                logger.warning("未找到最新数据或总客流量为零")
+                logger.warning("未找到有效线路数据或总客流量为零")
                 return None
 
             sorted_items = sorted(proportions.items(), key=lambda x: x[1], reverse=True)
@@ -139,12 +162,20 @@ class NanjingSubwayVisualizer:
         """总客流量趋势图"""
         try:
             df = self.data_collector.get_last_n_days_line_data(n_days)
-
             if df.empty:
                 logger.warning(f"未找到最近 {n_days} 天的数据")
                 return None
 
-            # 删除缺失值
+            # 确保 date 列是 datetime
+            df['date'] = pd.to_datetime(df['date'], errors='coerce')
+
+            # 如果 total 列全为 NaN，则用各线路之和填充
+            if df['total'].isna().all():
+                line_cols = [col for col in df.columns if col in self.data_collector.all_lines]
+                df['total'] = df[line_cols].sum(axis=1)
+                logger.info("total 列缺失，已使用各线路客流量之和作为总客流量")
+
+            # 删除日期或总客流量为 NaN 的行
             df = df.dropna(subset=['date', 'total'])
             if df.empty:
                 logger.warning("删除缺失值后无有效数据")
@@ -199,9 +230,16 @@ class NanjingSubwayVisualizer:
         """各线路站点客流强度趋势图（原站均客流量）"""
         try:
             df = self.data_collector.get_last_n_days_line_data(n_days)
-
             if df.empty:
                 logger.warning(f"未找到最近 {n_days} 天的数据")
+                return None
+
+            # 确保 date 列是 datetime
+            df['date'] = pd.to_datetime(df['date'], errors='coerce')
+            # 删除日期为 NaN 的行
+            df = df.dropna(subset=['date'])
+            if df.empty:
+                logger.warning("日期列无效")
                 return None
 
             # 反转数据以按时间正序
@@ -235,7 +273,7 @@ class NanjingSubwayVisualizer:
                     legend_labels.append(f'{line} ({stations}站)')
 
             ax.set_xlabel('日期', fontsize=30, fontweight='bold')
-            ax.set_ylabel('站点客流强度（万/站）', fontsize=30, fontweight='bold')  # 修改标签和单位
+            ax.set_ylabel('站点客流强度（万/站）', fontsize=30, fontweight='bold')
 
             ax.grid(True, alpha=0.3, linestyle='--')
 
@@ -262,7 +300,7 @@ class NanjingSubwayVisualizer:
                         dpi=300, bbox_inches='tight')
             plt.close(fig)
 
-            logger.info(f"最近 {n_days} 天站点客流强度趋势图已生成")  # 修改日志描述
+            logger.info(f"最近 {n_days} 天站点客流强度趋势图已生成")
             return fig
 
         except Exception as e:
@@ -273,17 +311,22 @@ class NanjingSubwayVisualizer:
         """各线路客流量占比趋势图"""
         try:
             df = self.data_collector.get_last_n_days_line_data(n_days)
-
             if df.empty:
                 logger.warning(f"未找到最近 {n_days} 天的数据")
+                return None
+
+            # 确保 date 列是 datetime
+            df['date'] = pd.to_datetime(df['date'], errors='coerce')
+            df = df.dropna(subset=['date'])
+            if df.empty:
+                logger.warning("日期列无效")
                 return None
 
             # 反转数据以按时间正序
             df = df.iloc[::-1].reset_index(drop=True)
 
             # 获取所有线路列（排除 'total' 和 'date'）
-            line_columns = [col for col in df.columns if col not in ['total', 'date']]
-            valid_line_columns = [col for col in line_columns if col in self.data_collector.all_lines]
+            valid_line_columns = [col for col in df.columns if col in self.data_collector.all_lines]
 
             if not valid_line_columns:
                 logger.warning("未找到有效的线路数据")
@@ -365,8 +408,18 @@ def main():
             latest_data = collector.get_latest_data()
             total = latest_data['passenger_data'].get('total_passengers', 0)
 
+            # 如果总客流量为 0，尝试从线路数据计算
+            if total == 0:
+                df = collector.get_last_n_days_line_data(1)
+                if not df.empty:
+                    line_cols = [col for col in df.columns if col in collector.all_lines]
+                    total = df[line_cols].sum(axis=1).iloc[0]
+                    logger.info(f"总客流量从线路数据计算得到: {total:.1f} 万")
+                else:
+                    total = 0.0
+
             logger.info(f"最新数据日期: {latest_date}")
-            logger.info(f"总客流量: {total:.1f} 万")  # 修改单位：万人次 -> 万
+            logger.info(f"总客流量: {total:.1f} 万")
 
             logger.info("=== 线路配置信息 ===")
             for line in collector.all_lines:
@@ -386,10 +439,10 @@ def main():
             if fig2:
                 logger.info("   总客流量趋势图已保存")
 
-            logger.info("3. 生成站点客流强度趋势图...")  # 修改描述
+            logger.info("3. 生成站点客流强度趋势图...")
             fig3 = visualizer.plot_last_n_days_line_trend()
             if fig3:
-                logger.info("   站点客流强度趋势图已保存")  # 修改描述
+                logger.info("   站点客流强度趋势图已保存")
 
             logger.info("4. 生成线路占比趋势图...")
             fig4 = visualizer.plot_line_proportion_trend()
@@ -441,9 +494,9 @@ def main():
             print("南京地铁客流分析完成！")
             print("=" * 60)
             print(f"最新数据日期: {latest_date}")
-            print(f"总客流量: {total:.1f} 万")  # 修改单位
+            print(f"总客流量: {total:.1f} 万")
             print(f"已生成图表: 4 张")
-            print("图表类型: 线路占比饼图、总客流量趋势图、站点客流强度趋势图、线路占比趋势图")  # 修改名称
+            print("图表类型: 线路占比饼图、总客流量趋势图、站点客流强度趋势图、线路占比趋势图")
             print(f"数据文件: recent_passenger_data.csv")
             print(f"JSON 文件: latest_data.json")
             print("=" * 60)
