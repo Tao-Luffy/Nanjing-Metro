@@ -191,6 +191,14 @@ class NanjingSubwayDataCollector:
             data.append(row)
 
         df = pd.DataFrame(data)
+
+        # 类型转换：确保 date 为 datetime，数值列为 float
+        df['date'] = pd.to_datetime(df['date'], errors='coerce')
+        numeric_cols = ['total'] + self.all_lines
+        for col in numeric_cols:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+
         return df
 
     def get_last_n_days_proportions(self, n: int = None) -> pd.DataFrame:
