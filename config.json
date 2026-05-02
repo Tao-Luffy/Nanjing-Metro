@@ -57,6 +57,13 @@
       "description": "机场线，连接南京南站和禄口机场"
     },
     {
+      "name": "S2号线",
+      "color": "#9E4B6D",
+      "opening_date": "2026-04-22",
+      "stations": 16,
+      "description": "第一条跨省共建共管的地铁线路"
+    },
+    {
       "name": "S3号线",
       "color": "#B06C96",
       "opening_date": "2017-12-06",
