@@ -157,17 +157,17 @@ def generate_html_report():
 
     def format_change_amount(value):
         if value > 0:
-            return f"+{abs(value):.1f} 万"
+            return f"+{abs(value):.1f}万"
         elif value < 0:
-            return f"-{abs(value):.1f} 万"
+            return f"-{abs(value):.1f}万"
         else:
-            return f"{abs(value):.1f} 万"
+            return f"{abs(value):.1f}万"
 
     def format_change_with_amount(pct_value, amount_value):
         return f"{format_change_pct(pct_value)}<br>{format_change_amount(amount_value)}"
 
     def format_line_info(line_count, station_count):
-        return f"{line_count} 条线路<br>{station_count} 个车站"
+        return f"{line_count}条<br>{station_count}站"
 
     # HTML 模板（唯一修改处：站点客流强度显示中去掉了“万”字）
     html_template = f"""
@@ -398,20 +398,20 @@ def generate_html_report():
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">最新日客流量</div>
-                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else ' 万'}</div>
+                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else '万'}</div>
                 <div class="stat-label">人次</div>
             </div>
 
             <div class="stat-card green-purple">
                 <div class="stat-label">昨日站点客流强度</div>
                 <!-- 修改点：删除了“万”字，原为 {station_intensity} 万/站 -->
-                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'} /站</div>
+                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}/站</div>
                 <div class="stat-label">客流强度 = 总客流量 / 总车站数</div>
             </div>
 
             <div class="stat-card orange">
                 <div class="stat-label">7日平均客流量</div>
-                <div class="stat-value">{avg_total:.2f} 万</div>
+                <div class="stat-value">{avg_total:.2f}万</div>
                 <div class="stat-label">人次</div>
             </div>
 
