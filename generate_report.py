@@ -3,9 +3,16 @@
 
 import json
 import os
+import sys
+import io
 from datetime import datetime, timedelta
 
 import pandas as pd
+
+# ========== 修复 Windows 控制台中文编码问题 ==========
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+# ===================================================
 
 
 def generate_html_report():
@@ -55,7 +62,7 @@ def generate_html_report():
                         json_data = json.load(f)
                     latest_date = json_data.get('latest_date', 'N/A')
                     latest_total = json_data.get('latest_total', 'N/A')
-                    # 确保 latest_total 是数值（字符串可能含逗号等）
+                    # 确保 latest_total 是数值
                     try:
                         latest_total = float(latest_total)
                     except (ValueError, TypeError):
@@ -66,9 +73,8 @@ def generate_html_report():
                 print(f"读取 {file_path} 时出错: {e}")
                 continue
 
-    # ========== 重要：先计算统计量，再重命名列名 ==========
+    # 计算统计数据（如果存在数据）
     if not df.empty and 'total' in df.columns:
-        # 计算统计数据（此时列名还是原始的 'total'）
         avg_total = df['total'].mean()
         max_total = df['total'].max()
         min_total = df['total'].min()
@@ -83,20 +89,19 @@ def generate_html_report():
             week_change_amount = df['total'].iloc[0] - df['total'].iloc[7]
             week_change_pct = (week_change_amount / df['total'].iloc[7] * 100) if df['total'].iloc[7] != 0 else 0
 
-        # 最后才将列名改为中文，用于表格显示（不影响上面计算）
+        # 最后才将列名改为中文，用于表格显示
         df = df.rename(columns={
             'date': '日期',
             'total': '总客流量（万）'
         })
     else:
-        # 如果没有 CSV 数据，尝试从日志文件提取（main.py 输出的是中文）
+        # 如果没有 CSV 数据，尝试从日志文件提取
         log_file = 'metro_analysis.log'
         if os.path.exists(log_file):
             try:
                 with open(log_file, 'r', encoding='utf-8') as f:
                     lines = f.readlines()
-                    # 查找最新的数据
-                    for line in reversed(lines[-20:]):  # 检查最后20行
+                    for line in reversed(lines[-20:]):
                         if '总客流量:' in line:
                             parts = line.split('总客流量:')
                             if len(parts) > 1:
@@ -120,32 +125,28 @@ def generate_html_report():
         quantity = len(lines)
         total_stations = sum(line.get("stations", 0) for line in lines)
 
-    # 计算站点客流强度
+    # 计算站点客流强度（单位：人次/站，原计算保持 *10000）
     station_intensity = 0
     if latest_total != "N/A" and total_stations > 0:
         try:
             latest_total_num = float(latest_total)
-            station_intensity = (latest_total_num * 10000) / total_stations
-            if pd.isna(station_intensity):
-                station_intensity = 0
-            else:
-                station_intensity = int(station_intensity)
+            station_intensity = int((latest_total_num * 10000) / total_stations)
         except (ValueError, TypeError):
             station_intensity = 0
 
     # 根据变化正负确定卡片颜色
     def get_change_color(value):
         if value > 0:
-            return "red"      # 上涨 - 红色
+            return "red"
         elif value < 0:
-            return "green"    # 下跌 - 绿色
+            return "green"
         else:
-            return "black"    # 持平 - 黑色
+            return "black"
 
     day_color = get_change_color(day_change_pct)
     week_color = get_change_color(week_change_pct)
 
-    # 格式化百分比（带正负号）
+    # 格式化变化显示
     def format_change_pct(value):
         if value > 0:
             return f"+{value:.3f}%"
@@ -154,7 +155,6 @@ def generate_html_report():
         else:
             return f"{value:.3f}%"
 
-    # 格式化变化量（带正负号和单位）
     def format_change_amount(value):
         if value > 0:
             return f"+{abs(value):.1f} 万"
@@ -163,15 +163,13 @@ def generate_html_report():
         else:
             return f"{abs(value):.1f} 万"
 
-    # 合并百分比和变化量（换行显示）
     def format_change_with_amount(pct_value, amount_value):
         return f"{format_change_pct(pct_value)}<br>{format_change_amount(amount_value)}"
 
-    # 格式化线路信息（换行显示）
     def format_line_info(line_count, station_count):
         return f"{line_count} 条线路<br>{station_count} 个车站"
 
-    # HTML 模板（中文版）
+    # HTML 模板（唯一修改处：站点客流强度显示中去掉了“万”字）
     html_template = f"""
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -185,46 +183,39 @@ def generate_html_report():
             padding: 0;
             box-sizing: border-box;
         }}
-
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
             background-color: #f5f5f5;
         }}
-
         .container {{
             max-width: 1400px;
             margin: 0 auto;
             background: white;
             padding: 20px;
         }}
-
         header {{
             text-align: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 2px solid #eaeaea;
         }}
-
         h1 {{
             color: #2c3e50;
             margin-bottom: 10px;
             font-size: 2.5em;
         }}
-
         .update-time {{
             color: #7f8c8d;
             font-size: 0.9em;
         }}
-
         .stats-grid {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }}
-
         .stat-card {{
             background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
             color: white;
@@ -233,35 +224,27 @@ def generate_html_report():
             text-align: center;
             min-width: 340px;
         }}
-
         .stat-card.green {{
             background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
         }}
-
         .stat-card.orange {{
             background: linear-gradient(135deg, #fde68a 0%, #f97316 100%);
         }}
-
         .stat-card.dark-blue {{
             background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
         }}
-
         .stat-card.green-purple {{
             background: linear-gradient(135deg, #10b981 0%, #8b5cf6 100%);
         }}
-
         .stat-card.purple {{
             background: linear-gradient(135deg, #d8b4fe 0%, #a855f7 100%);
         }}
-
         .stat-card.red {{
             background: linear-gradient(135deg, #fdba74 0%, #ef4444 100%);
         }}
-
         .stat-card.black {{
             background: linear-gradient(135deg, #d1d5db 0%, #6b7280 100%);
         }}
-
         .stat-value {{
             font-size: 2.5em;
             font-weight: bold;
@@ -270,14 +253,11 @@ def generate_html_report():
             overflow: hidden;
             text-overflow: ellipsis;
         }}
-
-        /* 允许变化卡片和线路卡片内换行 */
         .change-card .stat-value,
         .line-card .stat-value {{
             white-space: normal;
             line-height: 1.3;
         }}
-
         .stat-label {{
             font-size: 0.9em;
             opacity: 0.9;
@@ -285,21 +265,17 @@ def generate_html_report():
             overflow: hidden;
             text-overflow: ellipsis;
         }}
-
         .change-detail {{
             font-size: 0.8em;
             opacity: 0.9;
             margin-top: 5px;
         }}
-
-        /* 单列布局显示图片 */
         .images-grid {{
             display: flex;
             flex-direction: column;
             gap: 30px;
             margin-bottom: 40px;
         }}
-
         .image-card {{
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -307,52 +283,43 @@ def generate_html_report():
             transition: transform 0.3s ease;
             width: 100%;
         }}
-
         .image-card:hover {{
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }}
-
         .image-card img {{
             width: 100%;
             height: auto;
             display: block;
             object-fit: contain;
         }}
-
         .image-card .caption {{
             padding: 15px;
             text-align: center;
             background: #f8f9fa;
         }}
-
         .table-container {{
             overflow-x: auto;
             margin-bottom: 30px;
             height: 320px;
         }}
-
         table {{
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }}
-
         th, td {{
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }}
-
         th {{
             background-color: #f8f9fa;
             font-weight: 600;
         }}
-
         tr:hover {{
             background-color: #f5f5f5;
         }}
-
         .line-legend {{
             display: flex;
             flex-wrap: wrap;
@@ -362,20 +329,17 @@ def generate_html_report():
             background: #f8f9fa;
             border-radius: 8px;
         }}
-
         .line-item {{
             display: flex;
             align-items: center;
             margin-right: 15px;
         }}
-
         .line-color {{
             width: 20px;
             height: 20px;
             margin-right: 8px;
             border-radius: 4px;
         }}
-
         .footer {{
             text-align: center;
             margin-top: 40px;
@@ -384,48 +348,37 @@ def generate_html_report():
             color: #7f8c8d;
             font-size: 0.9em;
         }}
-
-        /* 移动端适配 */
         @media (max-width: 1400px) {{
             .stats-grid {{
                 grid-template-columns: repeat(3, 1fr);
             }}
         }}
-
         @media (max-width: 1100px) {{
             .stats-grid {{
                 grid-template-columns: repeat(2, 1fr);
             }}
         }}
-
         @media (max-width: 768px) {{
             .stats-grid {{
                 grid-template-columns: 1fr;
             }}
-
             .stat-card {{
                 min-width: auto;
             }}
-
             .container {{
                 padding: 15px;
             }}
-
             h1 {{
                 font-size: 2em;
             }}
-
             .stat-value {{
                 font-size: 2em;
             }}
-
             .change-card .stat-value,
             .line-card .stat-value {{
                 font-size: 1.8em;
             }}
         }}
-
-        /* 横屏时也保持单列 */
         @media (orientation: landscape) {{
             .images-grid {{
                 flex-direction: column;
@@ -451,7 +404,8 @@ def generate_html_report():
 
             <div class="stat-card green-purple">
                 <div class="stat-label">昨日站点客流强度</div>
-                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}{'' if station_intensity == 0 else ' 万/站'}</div>
+                <!-- 修改点：删除了“万”字，原为 {station_intensity} 万/站 -->
+                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'} /站</div>
                 <div class="stat-label">客流强度 = 总客流量 / 总车站数</div>
             </div>
 
@@ -483,31 +437,20 @@ def generate_html_report():
         <h2>可视化图表</h2>
         <div class="images-grid">
             <div class="image-card">
-                <img src="images/yesterday_passenger_line_proportion.png" alt="昨日线路客流占比图" style="width:100%; height:auto;">
-                <div class="caption">
-                    <h3>昨日各线路客流占比</h3>
-                </div>
+                <img src="images/yesterday_passenger_line_proportion.png" alt="昨日线路客流占比图">
+                <div class="caption"><h3>昨日各线路客流占比</h3></div>
             </div>
-
             <div class="image-card">
-                <img src="images/last_60_days_total_passenger_trend.png" alt="总客流量趋势图" style="width:100%; height:auto;">
-                <div class="caption">
-                    <h3>总客流量趋势（近60天）</h3>
-                </div>
+                <img src="images/last_60_days_total_passenger_trend.png" alt="总客流量趋势图">
+                <div class="caption"><h3>总客流量趋势（近60天）</h3></div>
             </div>
-
             <div class="image-card">
-                <img src="images/last_30_days_station_intensity_trend.png" alt="站点客流强度趋势图" style="width:100%; height:auto;">
-                <div class="caption">
-                    <h3>站点客流强度趋势（近30天）</h3>
-                </div>
+                <img src="images/last_30_days_station_intensity_trend.png" alt="站点客流强度趋势图">
+                <div class="caption"><h3>站点客流强度趋势（近30天）</h3></div>
             </div>
-
             <div class="image-card">
-                <img src="images/last_30_days_line_proportion_trend.png" alt="线路客流占比趋势图" style="width:100%; height:auto;">
-                <div class="caption">
-                    <h3>各线路客流占比趋势（近30天）</h3>
-                </div>
+                <img src="images/last_30_days_line_proportion_trend.png" alt="线路客流占比趋势图">
+                <div class="caption"><h3>各线路客流占比趋势（近30天）</h3></div>
             </div>
         </div>
 
