@@ -37,6 +37,13 @@ def generate_html_report():
                 if file_path.endswith('.csv'):
                     df = pd.read_csv(file_path, encoding='utf-8')
                     if not df.empty:
+                        # Ensure 'total' column is numeric, coercing errors to NaN and then fill with 0
+                        if 'total' in df.columns:
+                            df['total'] = pd.to_numeric(df['total'], errors='coerce').fillna(0)
+                        else:
+                            print(f"Warning: 'total' column not found in {file_path}")
+                            continue
+
                         # Extract latest date and total passengers
                         if 'date' in df.columns and 'total' in df.columns:
                             latest_date = df['date'].iloc[0]
@@ -109,13 +116,19 @@ def generate_html_report():
         # Calculate total number of stations
         total_stations = sum(line.get("stations", 0) for line in lines)
 
-    # Calculate station passenger intensity
+    # Calculate station passenger intensity safely
     station_intensity = 0
     if latest_total != "N/A" and total_stations > 0:
-        # Convert ten thousand to actual count, then divide by number of stations
-        station_intensity = (latest_total * 10000) / total_stations
-        # Format as integer
-        station_intensity = int(station_intensity)
+        try:
+            # Ensure latest_total is a valid number
+            latest_total_num = float(latest_total)
+            station_intensity = (latest_total_num * 10000) / total_stations
+            if pd.isna(station_intensity):
+                station_intensity = 0
+            else:
+                station_intensity = int(station_intensity)
+        except (ValueError, TypeError):
+            station_intensity = 0
 
     # Determine color for day-over-day and week-over-week changes
     def get_change_color(value):
