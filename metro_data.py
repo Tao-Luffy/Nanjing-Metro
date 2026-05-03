@@ -134,6 +134,7 @@ class NanjingSubwayDataCollector:
         """Get the latest date"""
         if not self.passenger_records:
             return ""
+        print (self.passenger_records)
         return self.passenger_records[0]['date']
 
     def get_latest_data(self) -> Dict:
