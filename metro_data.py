@@ -18,7 +18,7 @@ class NanjingSubwayDataCollector:
         self.line_info = {line["name"]: line for line in self.config["lines"]}
 
     def collect_data(self):
-        with open('page.html', 'r', encoding='utf-8') as f:
+        with open('docs/data/page.html', 'r', encoding='utf-8') as f:
             html = f.read()
         html_source = extract_passenger_data(html)
         passenger_records = html_source
