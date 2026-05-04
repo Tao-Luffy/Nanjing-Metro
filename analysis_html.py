@@ -65,7 +65,7 @@ def extract_passenger_data(html_content):
 
 # 使用示例：
 # 假设 html 文件已保存为 page.html
-with open('page.html', 'r', encoding='utf-8') as f:
+with open('docs/data/page.html', 'r', encoding='utf-8') as f:
     html = f.read()
 
 data = extract_passenger_data(html)
