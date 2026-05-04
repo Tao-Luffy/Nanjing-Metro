@@ -45,7 +45,7 @@ def extract_passenger_data(html_content):
         if '#昨日客流#' not in text and '客运量' not in text:
             continue
 
-        # ==================== 1. 解析日期 ====================
+        # ==================== 1. 解析日期（支持动态年份） ====================
         now = datetime.now()
         current_year = now.year
         current_month = now.month
@@ -89,33 +89,35 @@ def extract_passenger_data(html_content):
 
         date_str = f"{year}-{month:02d}-{day:02d}"
 
-        # ==================== 2. 解析各线路客流 ====================
+        # ==================== 2. 解析各线路客流（保留两位小数） ====================
         passenger_data = {}
         # 支持 "1号线"、"S1号线" 等格式
         pattern = r'(\d+|S\d+)号线\s*(\d+\.?\d*)'
         matches = re.findall(pattern, text)
         for line_num, val_str in matches:
             line_name = line_num + '号线'
-            passenger_data[line_name] = float(val_str)
+            passenger_data[line_name] = round(float(val_str), 2)
 
         if not passenger_data:
             print(f"警告：未提取到任何线路客流数据 -> {text[:80]}")
             continue
 
-        # ==================== 3. 总客流量解析 ====================
+        # ==================== 3. 总客流量解析（优先文本提取，否则求和） ====================
         total_passengers = 0.0
 
-        # 尝试从文本中直接提取 “客运量451.84” 或 “总客运量451.84”
-        total_match = re.search(r'(?:总?客运量)\s*(\d+\.?\d*)', text)
+        # 优先匹配 "客运量" 后面的数字（不依赖“总”字）
+        total_match = re.search(r'客运量\s*(\d+\.?\d*)', text)
         if total_match:
-            total_passengers = float(total_match.group(1))
+            total_passengers = round(float(total_match.group(1)), 2)
+            print(f"从文本提取总客流量: {total_passengers:.2f}")
         else:
-            # 若没有明确的总客流量字段，则对各线路客流求和
-            total_passengers = sum(passenger_data.values())
+            # 若没有明确的总客流量字段，则对各线路客流求和并保留两位小数
+            total_passengers = round(sum(passenger_data.values()), 2)
+            print(f"未找到'客运量'字段，使用求和: {total_passengers:.2f}")
 
-        passenger_data['total_passengers'] = round(total_passengers, 1)
+        passenger_data['total_passengers'] = total_passengers
 
-        print(f"解析成功: {date_str} 总客流量 {total_passengers:.1f} 万，线路数 {len(passenger_data)-1}")
+        print(f"解析成功: {date_str} 总客流量 {total_passengers:.2f} 万")
 
         records.append({
             "date": date_str,
