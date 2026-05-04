@@ -27,7 +27,7 @@ time.sleep(random.uniform(1, 2))
 
 html_source = driver.page_source
 
-with open("page.html", "w", encoding="utf-8") as f:
+with open("docs/data/page.html", "w", encoding="utf-8") as f:
     f.write(html_source)
 
 driver.quit()
