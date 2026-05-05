@@ -128,7 +128,7 @@ class NanjingSubwayVisualizer:
             # 图例文本：线路名、占比、实际客流量（万）
             legend_labels = []
             for line, value, actual in zip(lines, values, actual_passengers):
-                legend_labels.append(f"{line}: {value:.1f}% ({actual:.1f} 万)")
+                legend_labels.append(f"{line}: {value:.1f}% ({actual:.2f} 万)")
 
             # 图例放在图表下方，两列显示
             ax.legend(wedges, legend_labels,
@@ -138,7 +138,7 @@ class NanjingSubwayVisualizer:
                       fontsize=20)
 
             # 中心文字：日期、总客流量（万）
-            center_text = f"{latest_date}\n总客流量\n{total_passenger:.1f} 万"
+            center_text = f"{latest_date}\n总客流量\n{total_passenger:.2f} 万"
             ax.text(0, 0, center_text,
                     ha='center', va='center',
                     fontsize=28, fontweight='bold',
@@ -374,7 +374,7 @@ def main():
                     total = 0.0
 
             logger.info(f"最新数据日期: {latest_date}")
-            logger.info(f"总客流量: {total:.1f} 万")
+            logger.info(f"总客流量: {total:.2f} 万")
 
             logger.info("=== 线路配置信息 ===")
             for line in collector.all_lines:
