@@ -157,11 +157,11 @@ def generate_html_report():
 
     def format_change_amount(value):
         if value > 0:
-            return f"+{abs(value):.1f}万"
+            return f"+{abs(value):.2f}万"
         elif value < 0:
-            return f"-{abs(value):.1f}万"
+            return f"-{abs(value):.2f}万"
         else:
-            return f"{abs(value):.1f}万"
+            return f"{abs(value):.2f}万"
 
     def format_change_with_amount(pct_value, amount_value):
         return f"{format_change_pct(pct_value)}<br>{format_change_amount(amount_value)}"
