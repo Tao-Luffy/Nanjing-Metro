@@ -398,7 +398,7 @@ def generate_html_report():
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">最新日客流量</div>
-                <div class="stat-value">{latest_total if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else '万'}</div>
+                <div class="stat-value">{latest_total:.2f if latest_total != 'N/A' else 'N/A'}{'' if latest_total == 'N/A' else '万'}</div>
                 <div class="stat-label">人次</div>
             </div>
 
