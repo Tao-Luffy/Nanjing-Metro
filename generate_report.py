@@ -405,7 +405,7 @@ def generate_html_report():
             <div class="stat-card green-purple">
                 <div class="stat-label">昨日站点客流强度</div>
                 <!-- 修改点：删除了“万”字，原为 {station_intensity} 万/站 -->
-                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}/站</div>
+                <div class="stat-value">{station_intensity if station_intensity > 0 else 'N/A'}人/站</div>
                 <div class="stat-label">客流强度 = 总客流量 / 总车站数</div>
             </div>
 
