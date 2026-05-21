@@ -243,7 +243,7 @@ class NanjingSubwayVisualizer:
             df = df.iloc[::-1].reset_index(drop=True)
 
             line_info = self.data_collector.line_info
-            fig, ax = plt.subplots(figsize=(8, 12))
+            fig, ax = plt.subplots(figsize=(14, 21))
 
             legend_handles = []
             legend_labels = []
@@ -309,7 +309,7 @@ class NanjingSubwayVisualizer:
             total_passengers = df[valid_line_columns].sum(axis=1).values
             total_passengers = np.where(total_passengers == 0, 1, total_passengers)
 
-            fig, ax = plt.subplots(figsize=(9, 12))
+            fig, ax = plt.subplots(figsize=(14, 19))
             legend_handles = []
             legend_labels = []
 
