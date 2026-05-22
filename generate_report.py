@@ -442,15 +442,15 @@ def generate_html_report():
             </div>
             <div class="image-card">
                 <img src="images/last_60_days_total_passenger_trend.png" alt="总客流量趋势图">
-                <div class="caption"><h3>总客流量趋势（近60天）</h3></div>
+                <div class="caption"><h3>总客流量趋势</h3></div>
             </div>
             <div class="image-card">
                 <img src="images/last_30_days_station_intensity_trend.png" alt="站点客流强度趋势图">
-                <div class="caption"><h3>站点客流强度趋势（近30天）</h3></div>
+                <div class="caption"><h3>站点客流强度趋势</h3></div>
             </div>
             <div class="image-card">
                 <img src="images/last_30_days_line_proportion_trend.png" alt="线路客流占比趋势图">
-                <div class="caption"><h3>各线路客流占比趋势（近30天）</h3></div>
+                <div class="caption"><h3>各线路客流占比趋势</h3></div>
             </div>
         </div>
 
