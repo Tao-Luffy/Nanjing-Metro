@@ -148,7 +148,7 @@ class NanjingSubwayVisualizer:
             plt.tight_layout()
 
             os.makedirs('docs/images', exist_ok=True)
-            fig.savefig('docs/images/yesterday_passenger_line_proportion.png', dpi=300, bbox_inches='tight')
+            fig.savefig('docs/images/yesterday_passenger_line_proportion.png', dpi=240, bbox_inches='tight')
             plt.close(fig)
 
             logger.info("客流量占比饼图已生成")
@@ -216,7 +216,7 @@ class NanjingSubwayVisualizer:
 
             os.makedirs('docs/images', exist_ok=True)
             fig.savefig(f'docs/images/last_{n_days}_days_total_passenger_trend.png',
-                        dpi=300, bbox_inches='tight')
+                        dpi=150, bbox_inches='tight')
             plt.close(fig)
 
             logger.info(f"最近 {n_days} 天总客流量趋势图已生成")
