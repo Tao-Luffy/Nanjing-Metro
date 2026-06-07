@@ -76,11 +76,13 @@ def extract_passenger_data(html_content):
                 d_match = re.search(r'(\d{1,2})日', text)
                 if d_match:
                     day = int(d_match.group(1))
-                    month = current_month - 1 if day > current_day + 1
+                    if day > current_day + 1:
+                        month = current_month - 1
+                    else:
+                        month = current_month
+                    year = current_year
                     if month == 0:
                         month = 12
-                    year = current_year
-                    if month == 12 and current_month == 1:
                         year -= 1
                 else:
                     print(f"警告：无法从文本中解析日期 -> {text[:60]}")
