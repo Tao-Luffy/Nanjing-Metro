@@ -49,6 +49,7 @@ def extract_passenger_data(html_content):
         now = datetime.now()
         current_year = now.year
         current_month = now.month
+        current_day = now.day
 
         year = None
         month = None
@@ -75,8 +76,9 @@ def extract_passenger_data(html_content):
                 d_match = re.search(r'(\d{1,2})日', text)
                 if d_match:
                     day = int(d_match.group(1))
-                    # 默认使用上一个月
-                    month = current_month - 1 if current_month > 1 else 12
+                    month = current_month - 1 if day > current_day + 1
+                    if month == 0:
+                        month = 12
                     year = current_year
                     if month == 12 and current_month == 1:
                         year -= 1
